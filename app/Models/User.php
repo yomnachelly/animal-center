@@ -21,6 +21,9 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        'role',      // AJOUTER
+        'telephone', // AJOUTER  
+        'adresse',   // AJOUTER
     ];
 
     /**
@@ -64,5 +67,18 @@ public function avis()
 {
     return $this->hasMany(Avis::class);
 }
+public function isAdmin()
+    {
+        return $this->role === 'admin';
+    }
 
+    public function isVet()
+    {
+        return $this->role === 'vet';
+    }
+
+    public function isClient()
+    {
+        return $this->role === 'client';
+    }
 }
