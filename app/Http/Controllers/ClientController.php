@@ -15,7 +15,12 @@ class ClientController extends Controller
         if (auth()->user()->role !== 'client') {
             abort(403, 'Accès réservé aux clients');
         }
-
+        if (auth()->user()->verrouiller) {
+        auth()->logout();
+        return redirect('/login')->withErrors([
+            'email' => 'Votre compte est verrouillé. Veuillez contacter un administrateur.',
+        ]);
+        }
         return view('client.dashboard');
     }
 }

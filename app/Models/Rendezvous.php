@@ -6,23 +6,26 @@ use Illuminate\Database\Eloquent\Model;
 
 class Rendezvous extends Model
 {
+    // Indiquer explicitement le nom de la table
+    protected $table = 'rendezvous';
+
     public function user()
-{
-    return $this->belongsTo(User::class);
-}
+    {
+        return $this->belongsTo(User::class);
+    }
 
-public function animal()
-{
-    return $this->belongsTo(Animal::class);
-}
-public function soins()
-{
-    return $this->belongsToMany(Soin::class, 'rendezvous_soin');
-}
+    public function animal()
+    {
+        return $this->belongsTo(Animal::class);
+    }
 
-public function vaccins()
-{
-    return $this->belongsToMany(Vaccin::class, 'rendezvous_vaccin');
-}
+    public function soins()
+    {
+        return $this->belongsToMany(Soin::class, 'rendezvous_soin');
+    }
 
+    public function vaccins()
+    {
+        return $this->belongsToMany(Vaccin::class, 'rendezvous_vaccin');
+    }
 }

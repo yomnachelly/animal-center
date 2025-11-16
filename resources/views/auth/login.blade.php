@@ -23,7 +23,24 @@
                         <h4 class="mb-0">Connexion</h4>
                     </div>
                     <div class="card-body">
-                        <form method="POST" action="{{ route('login') }}">
+                        {{-- Affichage des messages de succès ou erreur --}}
+                        @if(session('locked'))
+                            <div class="alert alert-danger">
+                                {{ session('locked') }}
+                            </div>
+                        @endif
+
+                        @if($errors->any())
+                            <div class="alert alert-danger">
+                                <ul class="mb-0">
+                                    @foreach($errors->all() as $error)
+                                        <li>{{ $error }}</li>
+                                    @endforeach
+                                </ul>
+                            </div>
+                        @endif
+
+                        <form method="POST" action="{{ route('login.post') }}">
                             @csrf
                             <div class="mb-3">
                                 <label for="email" class="form-label">Email</label>

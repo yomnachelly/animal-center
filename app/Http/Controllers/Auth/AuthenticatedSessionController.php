@@ -22,23 +22,32 @@ class AuthenticatedSessionController extends Controller
     /**
      * Handle an incoming authentication request.
      */
-public function store(LoginRequest $request): RedirectResponse
-{
-    $request->authenticate();
+    public function store(LoginRequest $request): RedirectResponse
+    {
+        // Authentifie l'utilisateur
+        $request->authenticate();
 
-    $request->session()->regenerate();
+        $request->session()->regenerate();
 
-    // ✅ REDIRECTION SELON LE RÔLE
-    $user = auth()->user();
-    
-    if ($user->role === 'admin') {
-        return redirect()->intended('/admin/dashboard');
-    } elseif ($user->role === 'vet') {
-        return redirect()->intended('/vet/dashboard');
-    } else {
-        return redirect()->intended('/client/dashboard');
+        $user = auth()->user();
+
+        // ❌ Vérification si le compte est verrouillé
+        if ($user->verrouiller) {
+            Auth::logout();
+            return back()->withErrors([
+                'email' => 'Votre compte est verrouillé. Veuillez contacter un administrateur.',
+            ]);
+        }
+
+        // ✅ Redirection selon le rôle
+        if ($user->role === 'admin') {
+            return redirect()->intended('/admin/dashboard');
+        } elseif ($user->role === 'vet') {
+            return redirect()->intended('/vet/dashboard');
+        } else {
+            return redirect()->intended('/client/dashboard');
+        }
     }
-}
 
     /**
      * Destroy an authenticated session.

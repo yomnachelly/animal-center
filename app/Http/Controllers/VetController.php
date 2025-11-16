@@ -15,7 +15,12 @@ class VetController extends Controller
         if (auth()->user()->role !== 'vet') {
             abort(403, 'Accès réservé aux vétérinaires');
         }
-
+        if (auth()->user()->verrouiller) {
+        auth()->logout();
+        return redirect('/login')->withErrors([
+            'email' => 'Votre compte est verrouillé. Veuillez contacter un administrateur.',
+        ]);
+    }
         return view('vet.dashboard');
     }
 }

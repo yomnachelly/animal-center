@@ -2,53 +2,66 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Demande;
 use Illuminate\Http\Request;
+use App\Models\Demande;
+use App\Models\Adoption;
+use App\Models\Hebergement;
 
 class DemandeController extends Controller
 {
+    // Affichage
     public function index()
     {
-        return Demande::with('user', 'animal')->get();
+        $demandes = Demande::with(['user', 'animal'])->get();
+
+        foreach ($demandes as $demande) {
+            if (Adoption::where('demande_id', $demande->id)->exists()) {
+                $demande->type = "adoption";
+            } elseif (Hebergement::where('demande_id', $demande->id)->exists()) {
+                $demande->type = "hebergement";
+            } else {
+                $demande->type = "demande";
+            }
+        }
+
+        return view('admin.demandes.index', compact('demandes'));
     }
 
-    public function store(Request $request)
+    // Voir détails
+    public function details($id)
     {
-        $validated = $request->validate([
-            'user_id' => 'required',
-            'animal_id' => 'required',
-            'etat' => 'required'
-        ]);
+        $demande = Demande::with(['user', 'animal'])->findOrFail($id);
 
-        $demande = Demande::create($validated);
+        $type = "demande";
+        $details = null;
 
-        return response()->json([
-            'message' => 'Demande créée',
-            'demande' => $demande
-        ]);
+        if ($details = Adoption::where('demande_id', $id)->first()) {
+            $type = "adoption";
+        } 
+        elseif ($details = Hebergement::where('demande_id', $id)->first()) {
+            $type = "hebergement";
+        }
+
+        return view('admin.demandes.details', compact('demande', 'details', 'type'));
     }
 
-    public function show($id)
-    {
-        return Demande::with('user', 'animal')->findOrFail($id);
-    }
-
-    public function update(Request $request, $id)
+    // Accepter
+    public function accepter($id)
     {
         $demande = Demande::findOrFail($id);
-        $demande->update($request->all());
+        $demande->etat = 'accepte';
+        $demande->save();
 
-        return response()->json([
-            'message' => 'Demande modifiée',
-            'demande' => $demande
-        ]);
+        return back()->with('success', 'Demande acceptée.');
     }
 
-    public function destroy($id)
+    // Rejeter
+    public function rejeter($id)
     {
         $demande = Demande::findOrFail($id);
-        $demande->delete();
+        $demande->etat = 'rejete';
+        $demande->save();
 
-        return response()->json(['message' => 'Demande supprimée']);
+        return back()->with('success', 'Demande rejetée.');
     }
 }

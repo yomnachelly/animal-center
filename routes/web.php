@@ -1,67 +1,78 @@
 <?php
 
-use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use App\Http\Controllers\Auth\RegisteredUserController;
+use App\Http\Controllers\AnimalController;
+use App\Http\Controllers\RendezvousController;
+use App\Http\Controllers\UserController;
+use App\Http\Controllers\DemandeController;
 
-use App\Http\Controllers\HomeController; // AJOUTER
-use App\Http\Controllers\AdminController; // AJOUTER
-use App\Http\Controllers\VetController; // AJOUTER
-use App\Http\Controllers\ClientController; // AJOUTER
+// Pages publiques
+Route::get('/', function () { return view('welcome'); })->name('home');
+Route::get('/login', function () { return view('auth.login'); })->name('login');
+Route::get('/register', function () { return view('auth.register'); })->name('register');
 
-// Page d'accueil
-Route::get('/', function () {
-    return view('welcome');
-})->name('home');
+// Dashboard général (auth)
+Route::get('/dashboard', function () { return view('dashboard'); })
+    ->middleware(['auth', 'verified'])
+    ->name('dashboard');
 
-// Routes de connexion et inscription (si Breeze ne les a pas créées)
-Route::get('/login', function () {
-    return view('auth.login');
-})->name('login');
-
-Route::get('/register', function () {
-    return view('auth.register');
-})->name('register');
-
-// Dashboard (protégé)
-Route::get('/dashboard', function () {
-    return view('dashboard');
-})->middleware(['auth', 'verified'])->name('dashboard');
-
-// Routes profil
+// Profil
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
-// =============================================
-// ✅ AJOUTE CES NOUVELLES ROUTES POUR LES RÔLES
-// =============================================
-
-Route::middleware(['auth'])->group(function () {
-    // Dashboard Admin
-    Route::get('/admin/dashboard', [AdminController::class, 'index'])->name('admin.dashboard');
-    
-    // Dashboard Vétérinaire
-    Route::get('/vet/dashboard', [VetController::class, 'index'])->name('vet.dashboard');
-    
-    // Dashboard Client
-    Route::get('/client/dashboard', [ClientController::class, 'index'])->name('client.dashboard');
+// Dashboards selon rôle (auth)
+Route::middleware('auth')->group(function () {
+    Route::get('/admin/dashboard', function() { return view('admin.dashboard'); })->name('admin.dashboard');
+    Route::get('/vet/dashboard', function() { return view('vet.dashboard'); })->name('vet.dashboard');
+    Route::get('/client/dashboard', function() { return view('client.dashboard'); })->name('client.dashboard');
 });
 
-// Route de déconnexion personnalisée
+// Gestion des animaux (admin)
+Route::middleware('auth')->group(function() {
+    Route::get('/animaux', [AnimalController::class, 'index'])->name('animaux.index');
+    Route::get('/animaux/create', [AnimalController::class, 'create'])->name('animaux.create');
+    Route::post('/animaux', [AnimalController::class, 'store'])->name('animaux.store');
+    Route::get('/animaux/{animal}/edit', [AnimalController::class, 'edit'])->name('animaux.edit');
+    Route::put('/animaux/{animal}', [AnimalController::class, 'update'])->name('animaux.update');
+    Route::delete('/animaux/{animal}', [AnimalController::class, 'destroy'])->name('animaux.destroy');
+});
+
+
+// Auth: logout, login, register
 Route::post('/logout', function () {
     auth()->logout();
     request()->session()->invalidate();
     request()->session()->regenerateToken();
     return redirect('/');
 })->name('logout');
-// POST Login
-Route::post('/login', [AuthenticatedSessionController::class, 'store'])
-    ->name('login.post');
 
-// POST Register
-Route::post('/register', [RegisteredUserController::class, 'store'])
-    ->name('register.post');
+Route::post('/login', [AuthenticatedSessionController::class, 'store'])->name('login.post');
+Route::post('/register', [RegisteredUserController::class, 'store'])->name('register.post');
+
+// Gestion des utilisateurs (admin)
+Route::prefix('admin')->middleware('auth')->group(function () {
+    Route::get('users', [UserController::class, 'index'])->name('admin.users.index');
+    Route::get('users/create', [UserController::class, 'create'])->name('admin.users.create');
+    Route::post('users', [UserController::class, 'store'])->name('admin.users.store');
+    Route::get('users/{user}/edit', [UserController::class, 'edit'])->name('admin.users.edit');
+    Route::put('users/{user}', [UserController::class, 'update'])->name('admin.users.update');
+    Route::delete('users/{user}', [UserController::class, 'destroy'])->name('admin.users.destroy');
+    Route::put('users/{user}/verrouiller', [UserController::class, 'verrouiller'])->name('admin.users.verrouiller');
+    Route::put('users/{user}/deverrouiller', [UserController::class, 'deverrouiller'])->name('admin.users.deverrouiller');
+});
+// Gestion des demandes (admin)
+Route::prefix('admin')->middleware(['auth'])->group(function() {
+    Route::get('/demandes', [App\Http\Controllers\DemandeController::class, 'index'])->name('admin.demandes.index');
+    Route::post('/demandes/{demande}/accepter', [App\Http\Controllers\DemandeController::class, 'accepter'])->name('admin.demandes.accepter');
+    Route::post('/demandes/{demande}/rejeter', [App\Http\Controllers\DemandeController::class, 'rejeter'])->name('admin.demandes.rejeter');
+});
+Route::get('/admin/demandes/{id}/details', 
+    [App\Http\Controllers\DemandeController::class, 'details']
+)->name('admin.demandes.details');
+

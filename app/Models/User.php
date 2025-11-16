@@ -24,6 +24,7 @@ class User extends Authenticatable
         'role',      // AJOUTER
         'telephone', // AJOUTER  
         'adresse',   // AJOUTER
+        'verrouiller'// ajouter ici
     ];
 
     /**

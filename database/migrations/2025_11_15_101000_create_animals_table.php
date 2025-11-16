@@ -9,6 +9,7 @@ return new class extends Migration {
     {
         Schema::create('animals', function (Blueprint $table) {
             $table->id();
+
             $table->string('nom');
 
             $table->enum('espece', ['chat', 'chien', 'oiseau', 'lapin', 'tortue']);
@@ -18,8 +19,23 @@ return new class extends Migration {
             
             $table->enum('etat_sante', ['sain', 'malade léger', 'malade grave', 'blessé']);
 
-            $table->string('race');
-            $table->string('photo')->nullable();
+            // 🐾 Races ajoutées
+            $table->enum('race', [
+                'berger allemand',
+                'Caniche',
+                'Siamois',
+                'Maine Coon',
+                'Lapin nain hollandais',
+                'Lapin angora',
+                'Perroquet gris du Gabon',
+                'Canari',
+                'Tortue d\'Hermann',
+                'Tortue de Floride',
+                'Autre' // recommandé pour éviter blocage
+            ]);
+
+            // 📷 photo en LONG BLOB
+            $table->longBlob('photo')->nullable();
 
             $table->enum('statut', ['adopter', 'adopté', 'hébergé', 'assigner', 'à vacciner']);
 

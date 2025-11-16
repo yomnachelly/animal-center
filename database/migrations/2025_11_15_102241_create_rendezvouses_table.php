@@ -6,17 +6,24 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    public function up()
-{
-    Schema::create('rendezvous', function (Blueprint $table) {
-        $table->id();
-        $table->foreignId('user_id')->constrained()->onDelete('cascade');
-        $table->foreignId('animal_id')->constrained()->onDelete('cascade');
-        $table->dateTime('date');
-        $table->string('etat')->default('en attente');
-        $table->timestamps();
-    });
-}
+    /**
+     * Run the migrations.
+     */
+    public function up(): void
+    {
+        Schema::create('rendezvous', function (Blueprint $table) {
+            $table->id();
+            $table->foreignId('user_id')
+                  ->constrained()
+                  ->onDelete('cascade'); // supprime les rendez-vous si l'utilisateur est supprimé
+            $table->foreignId('animal_id')
+                  ->constrained()
+                  ->onDelete('cascade'); // supprime les rendez-vous si l'animal est supprimé
+            $table->dateTime('date');
+            $table->enum('etat', ['en attente', 'accepté', 'rejeté'])->default('en attente');
+            $table->timestamps();
+        });
+    }
 
     /**
      * Reverse the migrations.

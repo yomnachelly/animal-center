@@ -23,7 +23,25 @@
                         <h4 class="mb-0">Connexion</h4>
                     </div>
                     <div class="card-body">
-                        <form method="POST" action="<?php echo e(route('login')); ?>">
+                        
+                        <?php if(session('locked')): ?>
+                            <div class="alert alert-danger">
+                                <?php echo e(session('locked')); ?>
+
+                            </div>
+                        <?php endif; ?>
+
+                        <?php if($errors->any()): ?>
+                            <div class="alert alert-danger">
+                                <ul class="mb-0">
+                                    <?php $__currentLoopData = $errors->all(); $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $error): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                        <li><?php echo e($error); ?></li>
+                                    <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                                </ul>
+                            </div>
+                        <?php endif; ?>
+
+                        <form method="POST" action="<?php echo e(route('login.post')); ?>">
                             <?php echo csrf_field(); ?>
                             <div class="mb-3">
                                 <label for="email" class="form-label">Email</label>
@@ -48,4 +66,5 @@
         </div>
     </div>
 </body>
-</html><?php /**PATH C:\projet d'integration\animal-center-main\resources\views/auth/login.blade.php ENDPATH**/ ?>
+</html>
+<?php /**PATH C:\projet d'integration\animal-center-main\resources\views/auth/login.blade.php ENDPATH**/ ?>
