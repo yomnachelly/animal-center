@@ -30,35 +30,29 @@ class RegisteredUserController extends Controller
 public function store(Request $request)
 {
     $request->validate([
-    'name' => ['required', 'string', 'max:255'],
-    'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
-    'password' => ['required', 'confirmed', Rules\Password::defaults()],
-    'telephone' => ['required','string','max:255'],
-    'adresse' => ['required','string','max:255'],
-]);
-
+        'name' => ['required', 'string', 'max:255'],
+        'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
+        'password' => ['required', 'confirmed', Rules\Password::defaults()],
+        'telephone' => ['required','string','max:255'],
+        'adresse' => ['required','string','max:255'],
+    ]);
 
     // Création de l'utilisateur
     $user = User::create([
-    'name' => $request->name,
-    'email' => $request->email,
-    'password' => Hash::make($request->password),
-    'role' => 'client',
-    'telephone' => $request->telephone,
-    'adresse' => $request->adresse,
-]);
+        'name' => $request->name,
+        'email' => $request->email,
+        'password' => Hash::make($request->password),
+        'role' => 'client',
+        'telephone' => $request->telephone,
+        'adresse' => $request->adresse,
+    ]);
 
-    // Connecter l'utilisateur automatiquement
-    Auth::login($user);
+    // On NE connecte plus automatiquement l'utilisateur
+    // Auth::login($user);  ← supprimer ou commenter cette ligne
 
-    // REDIRECTION SELON RÔLE
-    if ($user->role === 'admin') {
-        return redirect()->route('admin.dashboard');
-    } elseif ($user->role === 'vet') {
-        return redirect()->route('vet.dashboard');
-    } else {
-        return redirect()->route('client.dashboard'); // 👈 CLIENT PAR DÉFAUT
-    }
+    // Redirection vers la page de login avec message
+    return redirect()->route('login')->with('success', 'Inscription réussie, connectez-vous !');
 }
+
 
 }
