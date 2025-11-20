@@ -26,6 +26,13 @@
         </div>
     </div>
 </div>
+<div>
+<a href="{{ route('client.notifications') }}" class="btn btn-info">
+    Mes Notifications ({{ auth()->user()->notificationsReceived->count() }})
+</a>
+
+</div>
+
 
 <div class="mt-4">
     <h3>Mes informations</h3>

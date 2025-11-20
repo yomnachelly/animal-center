@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Controllers\Controller;
 use App\Models\Vaccin;
 use Illuminate\Http\Request;
 
@@ -9,32 +10,62 @@ class VaccinController extends Controller
 {
     public function index()
     {
-        return Vaccin::all();
+        $vaccins = Vaccin::where('vet_id', auth()->id())->get();
+        return view('vet.vaccins.index', compact('vaccins'));
+    }
+
+    public function create()
+    {
+        return view('vet.vaccins.create');
     }
 
     public function store(Request $request)
     {
-        return Vaccin::create($request->validate([
+        $request->validate([
             'nom' => 'required',
-            'frais' => 'required|numeric'
-        ]));
+            'frais' => 'required|numeric',
+        ]);
+
+        Vaccin::create([
+            'nom' => $request->nom,
+            'frais' => $request->frais,
+            'vet_id' => auth()->id(),
+        ]);
+
+        return redirect()->route('vet.vaccins.index')->with('success', 'Vaccin ajouté');
     }
 
-    public function show($id)
+    public function edit(Vaccin $vaccin)
     {
-        return Vaccin::findOrFail($id);
+        $this->authorizeVet($vaccin);
+        return view('vet.vaccins.edit', compact('vaccin'));
     }
 
-    public function update(Request $request, $id)
+    public function update(Request $request, Vaccin $vaccin)
     {
-        $vaccin = Vaccin::findOrFail($id);
-        $vaccin->update($request->all());
-        return $vaccin;
+        $this->authorizeVet($vaccin);
+
+        $request->validate([
+            'nom' => 'required',
+            'frais' => 'required|numeric',
+        ]);
+
+        $vaccin->update($request->only('nom','frais'));
+
+        return redirect()->route('vet.vaccins.index')->with('success', 'Vaccin modifié');
     }
 
-    public function destroy($id)
+    public function destroy(Vaccin $vaccin)
     {
-        Vaccin::findOrFail($id)->delete();
-        return ['message' => 'Vaccin supprimé'];
+        $this->authorizeVet($vaccin);
+        $vaccin->delete();
+        return back()->with('success', 'Vaccin supprimé');
+    }
+
+    private function authorizeVet(Vaccin $vaccin)
+    {
+        if ($vaccin->vet_id !== auth()->id()) {
+            abort(403);
+        }
     }
 }

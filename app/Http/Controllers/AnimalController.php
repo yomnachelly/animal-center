@@ -3,51 +3,44 @@
 namespace App\Http\Controllers;
 
 use App\Models\Animal;
+use App\Models\Espece;
+use App\Models\Race;
 use Illuminate\Http\Request;
-use Illuminate\Validation\Rule;
 
 class AnimalController extends Controller
 {
-    // Liste des races
-    private $races = [
-        'Berger Allemand',
-        'Caniche',
-        'Siamois',
-        'Maine Coon',
-        'Lapin nain hollandais',
-        'Lapin angora',
-        'Perroquet gris du Gabon',
-        'Canari',
-        'Tortue d\'Hermann',
-        'Tortue de Floride',
-    ];
+    // ➤ Charger races selon espèce (AJAX)
+    public function getRaces(Espece $espece)
+    {
+        return response()->json($espece->races);
+    }
 
-    // Affiche tous les animaux
+    // ➤ Liste des animaux
     public function index()
     {
-        $animaux = Animal::all();
+        $animaux = Animal::with(['espece', 'race'])->get();
         return view('animaux.index', compact('animaux'));
     }
 
-    // Formulaire pour ajouter un animal
+    // ➤ Formulaire CREATE
     public function create()
     {
-        $races = $this->races;
-        return view('animaux.create', compact('races'));
+        $especes = Espece::all();  // toutes les espèces
+        return view('animaux.create', compact('especes'));
     }
 
-    // Enregistre un nouvel animal
+    // ➤ Enregistrer animal
     public function store(Request $request)
     {
         $validated = $request->validate([
             'nom' => 'required|string|max:255',
-            'espece' => 'required|string|max:255',
-            'race' => ['nullable', Rule::in($this->races)],
-            'sexe' => 'required|string',
+            'espece_id' => 'required|exists:especes,id',
+            'race_id' => 'nullable|exists:races,id',
+            'sexe' => 'required|in:feminin,masculin',
             'age' => 'nullable|integer',
-            'etat_sante' => 'required|string',
+            'etat_sante' => 'required|in:sain,malade léger,malade grave,blessé',
             'photo' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
-            'statut' => 'required|string',
+            'statut' => 'required|in:adopter,adopté,hébergé,assigner,à vacciner',
         ]);
 
         if ($request->hasFile('photo')) {
@@ -59,25 +52,27 @@ class AnimalController extends Controller
         return redirect()->route('animaux.index')->with('success', 'Animal ajouté avec succès.');
     }
 
-    // Formulaire pour éditer un animal
+    // ➤ Formulaire EDIT
     public function edit(Animal $animal)
     {
-        $races = $this->races;
-        return view('animaux.edit', compact('animal', 'races'));
+        $especes = Espece::all();
+        $races = Race::where('espece_id', $animal->espece_id)->get();
+
+        return view('animaux.edit', compact('animal', 'especes', 'races'));
     }
 
-    // Met à jour un animal
+    // ➤ Mise à jour animal
     public function update(Request $request, Animal $animal)
     {
         $validated = $request->validate([
             'nom' => 'required|string|max:255',
-            'espece' => 'required|string|max:255',
-            'race' => ['nullable', Rule::in($this->races)],
-            'sexe' => 'required|string',
+            'espece_id' => 'required|exists:especes,id',
+            'race_id' => 'nullable|exists:races,id',
+            'sexe' => 'required|in:feminin,masculin',
             'age' => 'nullable|integer',
-            'etat_sante' => 'required|string',
+            'etat_sante' => 'required|in:sain,malade léger,malade grave,blessé',
             'photo' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
-            'statut' => 'required|string',
+            'statut' => 'required|in:adopter,adopté,hébergé,assigner,à vacciner',
         ]);
 
         if ($request->hasFile('photo')) {
@@ -89,7 +84,7 @@ class AnimalController extends Controller
         return redirect()->route('animaux.index')->with('success', 'Animal modifié avec succès.');
     }
 
-    // Supprime un animal
+    // ➤ Suppression animal
     public function destroy(Animal $animal)
     {
         $animal->delete();

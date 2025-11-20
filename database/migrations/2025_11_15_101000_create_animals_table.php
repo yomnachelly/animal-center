@@ -12,34 +12,24 @@ return new class extends Migration {
 
             $table->string('nom');
 
-            $table->enum('espece', ['chat', 'chien', 'oiseau', 'lapin', 'tortue']);
+            // 🔗 Foreign keys
+            $table->unsignedBigInteger('espece_id');
+            $table->unsignedBigInteger('race_id')->nullable(); // parfois optionnel
 
             $table->integer('age');
             $table->enum('sexe', ['feminin', 'masculin']);
-            
+
             $table->enum('etat_sante', ['sain', 'malade léger', 'malade grave', 'blessé']);
 
-            // 🐾 Races ajoutées
-            $table->enum('race', [
-                'berger allemand',
-                'Caniche',
-                'Siamois',
-                'Maine Coon',
-                'Lapin nain hollandais',
-                'Lapin angora',
-                'Perroquet gris du Gabon',
-                'Canari',
-                'Tortue d\'Hermann',
-                'Tortue de Floride',
-                'Autre' // recommandé pour éviter blocage
-            ]);
-
-            // 📷 photo en LONG BLOB
             $table->longBlob('photo')->nullable();
 
             $table->enum('statut', ['adopter', 'adopté', 'hébergé', 'assigner', 'à vacciner']);
 
             $table->timestamps();
+
+            // relations
+            $table->foreign('espece_id')->references('id')->on('especes')->onDelete('cascade');
+            $table->foreign('race_id')->references('id')->on('races')->onDelete('set null');
         });
     }
 

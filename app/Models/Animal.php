@@ -8,27 +8,22 @@ class Animal extends Model
 {
     protected $fillable = [
         'nom',
-        'espece',
+        'espece_id',
+        'race_id',
         'age',
         'sexe',
         'etat_sante',
         'photo',
-        'statut',
-        'race'
+        'statut'
     ];
 
-    public function demandes()
+    public function espece()
     {
-        return $this->hasMany(Demande::class);
+        return $this->belongsTo(Espece::class);
     }
 
-    public function rendezvous()
+    public function race()
     {
-        return $this->hasMany(Rendezvous::class);
-    }
-
-    public function adoptions()
-    {
-        return $this->hasMany(Adoption::class);
+        return $this->belongsTo(Race::class);
     }
 }

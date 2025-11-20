@@ -8,6 +8,14 @@ use App\Http\Controllers\AnimalController;
 use App\Http\Controllers\RendezvousController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\DemandeController;
+use App\Http\Controllers\VetController;
+use App\Http\Controllers\EspeceController;
+use App\Http\Controllers\RaceController;
+use App\Http\Controllers\ClientController;
+use App\Http\Controllers\SoinController;
+use App\Http\Controllers\VaccinController;
+
+
 
 // Pages publiques
 Route::get('/', function () { return view('welcome'); })->name('home');
@@ -26,23 +34,35 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
-// Dashboards selon rôle (auth)
 Route::middleware('auth')->group(function () {
+
+    // Admin
     Route::get('/admin/dashboard', function() { return view('admin.dashboard'); })->name('admin.dashboard');
-    Route::get('/vet/dashboard', function() { return view('vet.dashboard'); })->name('vet.dashboard');
+
+    // Vétérinaire
+    Route::get('/vet/dashboard', [App\Http\Controllers\VetController::class, 'index'])->name('vet.dashboard');
+
+    // Client
     Route::get('/client/dashboard', function() { return view('client.dashboard'); })->name('client.dashboard');
+
 });
+
 
 // Gestion des animaux (admin)
 Route::middleware('auth')->group(function() {
     Route::get('/animaux', [AnimalController::class, 'index'])->name('animaux.index');
+    Route::get('/races/by-espece/{espece}', [AnimalController::class, 'getRaces']);
     Route::get('/animaux/create', [AnimalController::class, 'create'])->name('animaux.create');
     Route::post('/animaux', [AnimalController::class, 'store'])->name('animaux.store');
     Route::get('/animaux/{animal}/edit', [AnimalController::class, 'edit'])->name('animaux.edit');
     Route::put('/animaux/{animal}', [AnimalController::class, 'update'])->name('animaux.update');
     Route::delete('/animaux/{animal}', [AnimalController::class, 'destroy'])->name('animaux.destroy');
 });
+// ESPECES
+Route::resource('especes', \App\Http\Controllers\EspeceController::class);
 
+// RACES
+Route::resource('races', \App\Http\Controllers\RaceController::class);
 
 // Auth: logout, login, register
 Route::post('/logout', function () {
@@ -75,4 +95,22 @@ Route::prefix('admin')->middleware(['auth'])->group(function() {
 Route::get('/admin/demandes/{id}/details', 
     [App\Http\Controllers\DemandeController::class, 'details']
 )->name('admin.demandes.details');
+Route::prefix('veterinaire')->middleware(['auth'])->group(function () {
+    Route::get('/dashboard', [VetController::class, 'index'])->name('veterinaire.dashboard');
+});
+// Dashboard client
+Route::get('/client/dashboard', [ClientController::class, 'index'])->name('client.dashboard');
+
+// Page des notifications
+Route::get('/client/notifications', [ClientController::class, 'notifications'])->name('client.notifications');
+Route::get('/client/notifications/repondre/{id}', [ClientController::class, 'repondreNotification'])->name('client.notifications.repondre');
+    Route::delete('/client/notifications/{id}', [ClientController::class, 'supprimerNotification'])->name('client.notifications.supprimer');
+    Route::get('/client/notifications/repondre/{id}', [ClientController::class, 'repondreNotification'])->name('client.notifications.repondre');
+    Route::post('/client/notifications/repondre/{id}', [ClientController::class, 'envoyerReponse'])->name('client.notifications.envoyerReponse');
+    Route::middleware(['auth', 'role:vet'])->prefix('vet')->name('vet.')->group(function () {
+});
+Route::middleware('auth')->prefix('vet')->name('vet.')->group(function () {
+    Route::resource('soins', App\Http\Controllers\SoinController::class);
+    Route::resource('vaccins', App\Http\Controllers\VaccinController::class);
+});
 

@@ -45,6 +45,30 @@
                 </div>
             </div>
         </div>
+        <div class="col-md-3">
+            <div class="card bg-warning text-dark h-100">
+                <div class="card-body">
+                    <h5 class="card-title">Races</h5>
+                    <p class="card-text">Voir les races</p>
+                    <a href="{{ route('races.index') }}" class="btn btn-dark btn-sm">Voir</a>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card bg-warning text-dark h-100">
+                <div class="card-body">
+                    <h5 class="card-title">Espéces</h5>
+                    <p class="card-text">Voir les espéces</p>
+                    <a href="{{ route('especes.index') }}" class="btn btn-dark btn-sm">Voir</a>
+                </div>
+            </div>
+        </div>
+        <div>
+<a href="{{ route('client.notifications') }}" class="btn btn-info">
+    Mes Notifications ({{ auth()->user()->notificationsReceived->count() }})
+</a>
+
+</div>
     </div>
 
     <div class="mt-5">
@@ -58,6 +82,8 @@
                 <li><a class="dropdown-item" href="{{ route('admin.users.index') }}">Voir les utilisateurs</a></li>
                 <li><a class="dropdown-item" href="{{ route('admin.demandes.index') }}">Gérer les demandes</a></li>
                 <li><a class="dropdown-item" href="#">Consulter les rapports</a></li>
+                <li><a class="dropdown-item" href="{{ route('especes.index') }}">Gérer les espéces</a></li>
+                <li><a class="dropdown-item" href="{{ route('races.index') }}">Gérer les races</a></li>
             </ul>
         </div>
     </div>

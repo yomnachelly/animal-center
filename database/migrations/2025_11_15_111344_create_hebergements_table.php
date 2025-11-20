@@ -6,23 +6,19 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-public function up()
-{
-    Schema::create('hebergements', function (Blueprint $table) {
-        $table->id();
-        $table->foreignId('user_id')->constrained()->onDelete('cascade');
-        $table->foreignId('animal_id')->constrained()->onDelete('cascade');
-        $table->date('date_debut');
-        $table->date('date_fin')->nullable();
-        $table->decimal('frais', 8, 2)->default(0);
-        $table->timestamps();
-    });
-}
+    public function up(): void
+    {
+        Schema::create('hebergements', function (Blueprint $table) {
+            $table->id();
+            $table->foreignId('demande_id')->constrained()->onDelete('cascade'); // FK vers demandes
+            $table->foreignId('user_id')->constrained()->onDelete('cascade'); // FK vers users
+            $table->foreignId('animal_id')->constrained()->onDelete('cascade'); // FK vers animals
+            $table->date('date_debut');
+            $table->date('date_fin');
+            $table->timestamps();
+        });
+    }
 
-
-    /**
-     * Reverse the migrations.
-     */
     public function down(): void
     {
         Schema::dropIfExists('hebergements');

@@ -6,11 +6,17 @@ use Illuminate\Database\Eloquent\Model;
 
 class Vaccin extends Model
 {
-    protected $fillable = ['nom', 'frais'];
+    protected $fillable = ['nom', 'frais', 'vet_id'];
 
     public function rendezvous()
     {
         return $this->hasMany(Rendezvous::class);
     }
+
+    public function vet()
+    {
+        return $this->belongsTo(User::class, 'vet_id');
+    }
 }
+
 

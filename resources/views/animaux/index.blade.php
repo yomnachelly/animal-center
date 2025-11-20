@@ -17,7 +17,7 @@
             <th>Espèce</th>
             <th>Race</th>
             <th>Sexe</th>
-            <th>Age</th>
+            <th>Âge</th>
             <th>État santé</th>
             <th>Statut</th>
             <th>Photo</th>
@@ -28,26 +28,41 @@
         @foreach($animaux as $animal)
             <tr>
                 <td>{{ $animal->nom }}</td>
-                <td>{{ $animal->espece }}</td>
-                <td>{{ $animal->race }}</td>
+
+                <!-- 🔗 Relations avec espece -->
+                <td>{{ $animal->espece->nom }}</td>
+
+                <!-- 🔗 Relation avec race (+ gestion null) -->
+                <td>
+                    {{ $animal->race ? $animal->race->nom : 'Aucune' }}
+                </td>
+
                 <td>{{ $animal->sexe }}</td>
                 <td>{{ $animal->age }}</td>
                 <td>{{ $animal->etat_sante }}</td>
                 <td>{{ $animal->statut }}</td>
+
+                <!-- Photo stockée dans storage/app/public -->
                 <td>
                     @if($animal->photo)
-                        <img src="{{ asset('storage/'.$animal->photo) }}" width="60" alt="Photo de {{ $animal->nom }}">
+                        <img src="{{ asset('storage/'.$animal->photo) }}" width="60" class="rounded">
                     @else
                         <span class="text-muted">Aucune</span>
                     @endif
                 </td>
+
                 <td>
-                    <a href="{{ route('animaux.edit', $animal) }}" class="btn btn-sm btn-warning">Modifier</a>
-                    <form action="{{ route('animaux.destroy', $animal) }}" method="POST" style="display:inline-block;">
+                    <a href="{{ route('animaux.edit', $animal) }}" class="btn btn-sm btn-warning">
+                        Modifier
+                    </a>
+
+                    <form action="{{ route('animaux.destroy', $animal) }}" 
+                          method="POST" class="d-inline-block">
                         @csrf
                         @method('DELETE')
-                        <button type="submit" class="btn btn-sm btn-danger"
-                            onclick="return confirm('Voulez-vous vraiment supprimer cet animal ?')">
+                        <button type="submit" 
+                                class="btn btn-sm btn-danger"
+                                onclick="return confirm('Voulez-vous vraiment supprimer cet animal ?')">
                             Supprimer
                         </button>
                     </form>

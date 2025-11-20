@@ -9,16 +9,27 @@ class NotificationApp extends Model
 {
     use HasFactory;
 
-    protected $table = 'notifications_app'; // nom de la table
+    protected $table = 'notifications_app';
 
     protected $fillable = [
-        'user_id',
+        'id_expediteur',
+        'id_destinataire',
         'contenu',
         'date',
     ];
+    protected $casts = [
+    'date' => 'datetime', // transforme automatiquement en Carbon
+];
 
-    public function user()
+    // L'utilisateur qui envoie
+    public function expediteur()
     {
-        return $this->belongsTo(User::class);
+        return $this->belongsTo(User::class, 'id_expediteur');
+    }
+
+    // L'utilisateur qui reçoit
+    public function destinataire()
+    {
+        return $this->belongsTo(User::class, 'id_destinataire');
     }
 }

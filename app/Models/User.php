@@ -59,10 +59,18 @@ public function rendezvous()
     return $this->hasMany(Rendezvous::class);
 }
 
-public function notifications()
+// Notifications reçues
+public function notificationsReceived()
 {
-    return $this->hasMany(Notification::class);
+    return $this->hasMany(\App\Models\NotificationApp::class, 'id_destinataire');
 }
+
+// Notifications envoyées
+public function notificationsSent()
+{
+    return $this->hasMany(\App\Models\NotificationApp::class, 'id_expediteur');
+}
+
 
 public function avis()
 {
@@ -82,4 +90,14 @@ public function isAdmin()
     {
         return $this->role === 'client';
     }
+    public function soins()
+{
+    return $this->hasMany(Soin::class, 'vet_id');
+}
+
+public function vaccins()
+{
+    return $this->hasMany(Vaccin::class, 'vet_id');
+}
+
 }
