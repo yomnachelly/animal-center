@@ -1,91 +1,42 @@
 <?php $__env->startSection('content'); ?>
 <div class="container mt-4">
     <div class="d-flex justify-content-between align-items-center mb-4">
-        <h1>Dashboard Administrateur</h1>
-        <span class="badge bg-danger">Admin</span>
-    </div>
-
-    <!-- Cards résumé -->
-    <div class="row g-3">
-        <div class="col-md-3">
-            <div class="card bg-primary text-white h-100">
-                <div class="card-body">
-                    <h5 class="card-title">Utilisateurs</h5>
-                    <p class="card-text">Gérer les comptes</p>
-                    <a href="<?php echo e(route('admin.users.index')); ?>" class="btn btn-light btn-sm">Voir</a>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-3">
-            <div class="card bg-success text-white h-100">
-                <div class="card-body">
-                    <h5 class="card-title">Animaux</h5>
-                    <p class="card-text">Gérer les animaux</p>
-                    <a href="<?php echo e(route('animaux.index')); ?>" class="btn btn-light btn-sm">Voir</a>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-3">
-            <div class="card bg-warning text-dark h-100">
-                <div class="card-body">
-                    <h5 class="card-title">Demandes</h5>
-                    <p class="card-text">Voir les demandes</p>
-                    <a href="<?php echo e(route('admin.demandes.index')); ?>" class="btn btn-dark btn-sm">Voir</a>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-3">
-            <div class="card bg-info text-white h-100">
-                <div class="card-body">
-                    <h5 class="card-title">Rapports</h5>
-                    <p class="card-text">Statistiques</p>
-                    <a href="#" class="btn btn-light btn-sm">Voir</a>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-3">
-            <div class="card bg-warning text-dark h-100">
-                <div class="card-body">
-                    <h5 class="card-title">Races</h5>
-                    <p class="card-text">Voir les races</p>
-                    <a href="<?php echo e(route('races.index')); ?>" class="btn btn-dark btn-sm">Voir</a>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-3">
-            <div class="card bg-warning text-dark h-100">
-                <div class="card-body">
-                    <h5 class="card-title">Espéces</h5>
-                    <p class="card-text">Voir les espéces</p>
-                    <a href="<?php echo e(route('especes.index')); ?>" class="btn btn-dark btn-sm">Voir</a>
-                </div>
-            </div>
-        </div>
         <div>
-<a href="<?php echo e(route('client.notifications')); ?>" class="btn btn-info">
-    Mes Notifications (<?php echo e(auth()->user()->notificationsReceived->count()); ?>)
-</a>
+            <h1 class="fw-bold mb-0">Espace Administrateur</h1>
+            <p class="text-muted mt-1">
+                Interface de gestion du système — consultez les statistiques, surveillez les activités 
+                et accédez aux fonctionnalités essentielles du centre.
+            </p>
+        </div>
 
-</div>
+        <span class="badge bg-danger fs-6 px-3 py-2 shadow-sm">
+            <i class="bi bi-shield-lock-fill me-1"></i> Administrateur
+        </span>
     </div>
-
-    <div class="mt-5">
-        <h3>Actions rapides</h3>
-        <div class="dropdown">
-            <button class="btn btn-secondary btn-lg dropdown-toggle" type="button" id="actionsDropdown" data-bs-toggle="dropdown" aria-expanded="false">
-                Sélectionner une action
-            </button>
-            <ul class="dropdown-menu" aria-labelledby="actionsDropdown">
-                <li><a class="dropdown-item" href="<?php echo e(route('animaux.index')); ?>">Gérer les animaux</a></li>
-                <li><a class="dropdown-item" href="<?php echo e(route('admin.users.index')); ?>">Voir les utilisateurs</a></li>
-                <li><a class="dropdown-item" href="<?php echo e(route('admin.demandes.index')); ?>">Gérer les demandes</a></li>
-                <li><a class="dropdown-item" href="#">Consulter les rapports</a></li>
-                <li><a class="dropdown-item" href="<?php echo e(route('especes.index')); ?>">Gérer les espéces</a></li>
-                <li><a class="dropdown-item" href="<?php echo e(route('races.index')); ?>">Gérer les races</a></li>
-            </ul>
+    <div class="card shadow-sm border-0 mb-4">
+        <div class="card-body p-4">
+            <h4 class="fw-semibold">Bienvenue dans votre tableau de bord</h4>
+            <p class="text-muted mb-0">
+                Cette interface regroupe toutes les informations essentielles pour superviser 
+                le fonctionnement du refuge.  
+                Utilisez le menu pour accéder aux animaux, aux demandes d’adoption, aux avis, 
+                ainsi qu’aux différentes sections d’administration.
+            </p>
         </div>
     </div>
+
+
 </div>
+
+<style>
+    .hover-card {
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+    .hover-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+    }
+</style>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 <?php $__env->stopSection(); ?>

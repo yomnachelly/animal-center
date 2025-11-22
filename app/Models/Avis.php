@@ -14,6 +14,12 @@ class Avis extends Model
         'texte',
     ];
 
+    // Active automatiquement les timestamps (created_at et updated_at)
+    public $timestamps = true;
+
+    // Indique que created_at et updated_at sont des objets Carbon
+    protected $dates = ['created_at', 'updated_at'];
+
     public function user()
     {
         return $this->belongsTo(User::class);

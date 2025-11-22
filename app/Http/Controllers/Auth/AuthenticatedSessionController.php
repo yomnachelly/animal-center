@@ -8,6 +8,7 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\View\View;
+use App\Models\Animal;
 
 class AuthenticatedSessionController extends Controller
 {
@@ -37,6 +38,19 @@ class AuthenticatedSessionController extends Controller
             return back()->withErrors([
                 'email' => 'Votre compte est verrouillé. Veuillez contacter un administrateur.',
             ]);
+        }
+
+        // ✅ Vérifier s'il y a un animal à adopter en session
+        if ($animalId = session('animal_a_adopter')) {
+            $animal = Animal::find($animalId);
+            session()->forget('animal_a_adopter');
+            
+            if ($animal) {
+                // Rediriger vers la page d'accueil avec un message
+                return redirect('/')
+                    ->with('success', 'Vous êtes maintenant connecté. Vous pouvez faire votre demande d\'adoption pour ' . $animal->nom . '.')
+                    ->with('scroll_to_animal', $animalId);
+            }
         }
 
         // ✅ Redirection selon le rôle

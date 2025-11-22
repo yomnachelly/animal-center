@@ -7,22 +7,21 @@ use Illuminate\Support\Facades\Schema;
 return new class extends Migration
 {
     public function up()
-{
-    Schema::create('adoptions', function (Blueprint $table) {
-        $table->id();
-        $table->foreignId('user_id')->constrained()->onDelete('cascade');
-        $table->foreignId('animal_id')->constrained()->onDelete('cascade');
-        $table->date('date')->nullable();
-        $table->string('statut')->default('en attente');
-        $table->timestamps();
-    });
-}
+    {
+        Schema::create('adoptions', function (Blueprint $table) {
+            $table->id();
+            $table->foreignId('user_id')->constrained()->onDelete('cascade');
+            $table->foreignId('animal_id')->constrained()->onDelete('cascade');
+            $table->foreignId('demande_id')->constrained()->onDelete('cascade');
+            $table->date('date');
+            $table->timestamps();
+            
+            // Chaque demande ne peut avoir qu'une adoption
+            $table->unique('demande_id');
+        });
+    }
 
-
-    /**
-     * Reverse the migrations.
-     */
-    public function down(): void
+    public function down()
     {
         Schema::dropIfExists('adoptions');
     }

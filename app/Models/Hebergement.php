@@ -49,4 +49,12 @@ class Hebergement extends Model
         }
         return 0;
     }
+    public function demande()
+{
+    return $this->belongsTo(Demande::class, 'demande_id');
+}
+
+    
+
+    
 }

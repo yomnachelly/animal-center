@@ -7,36 +7,19 @@ use Illuminate\Http\Request;
 
 class AvisController extends Controller
 {
+    // Affiche tous les avis
     public function index()
     {
-        return Avis::with('user')->get();
+        $avis = Avis::with('user')->latest()->get();
+        return view('avis.index', compact('avis'));
     }
 
-    public function store(Request $request)
-    {
-        $validated = $request->validate([
-            'user_id' => 'required',
-            'texte' => 'required',
-        ]);
-
-        return Avis::create($validated);
-    }
-
-    public function show($id)
-    {
-        return Avis::with('user')->findOrFail($id);
-    }
-
-    public function update(Request $request, $id)
-    {
-        $avis = Avis::findOrFail($id);
-        $avis->update($request->all());
-        return $avis;
-    }
-
+    // Supprime un avis
     public function destroy($id)
     {
-        Avis::findOrFail($id)->delete();
-        return ['message' => 'Avis supprimé'];
+        $avis = Avis::findOrFail($id);
+        $avis->delete();
+
+        return redirect()->route('avis.index')->with('success', 'Avis supprimé avec succès.');
     }
 }

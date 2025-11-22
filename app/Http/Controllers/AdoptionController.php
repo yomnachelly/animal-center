@@ -3,53 +3,69 @@
 namespace App\Http\Controllers;
 
 use App\Models\Adoption;
+use App\Models\Demande;
+use App\Models\Animal;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
-class AdoptionController extends Controller
+class AdoptionController extends Controller 
 {
-    public function index()
+    public function demandeAdopter(Animal $animal)
     {
-        return Adoption::with('user', 'animal')->get();
-    }
+        // Vérifier si l'utilisateur est connecté
+        if (!Auth::check()) {
+            session(['animal_a_adopter' => $animal->id]);
+            return redirect()->route('login')
+                ->with('info', 'Veuillez vous connecter pour faire une demande d\'adoption.');
+        }
 
-    public function store(Request $request)
-    {
-        $validated = $request->validate([
-            'user_id' => 'required',
-            'animal_id' => 'required',
-            'date' => 'required',
-            'statut' => 'required'
-        ]);
+        // Vérifier si une demande existe déjà
+        $demandeExistante = Demande::where('user_id', Auth::id())
+            ->where('animal_id', $animal->id)
+            ->first();
 
-        $adoption = Adoption::create($validated);
+        if ($demandeExistante) {
+            return redirect()->back()
+                ->with('error', 'Vous avez déjà fait une demande d\'adoption pour cet animal.');
+        }
 
-        return response()->json([
-            'message' => 'Adoption enregistrée',
-            'adoption' => $adoption
-        ]);
-    }
+        try {
+            // Utiliser une transaction
+            DB::beginTransaction();
 
-    public function show($id)
-    {
-        return Adoption::with('user', 'animal')->findOrFail($id);
-    }
+            // Créer la demande
+            $demande = Demande::create([
+                'user_id' => Auth::id(),
+                'animal_id' => $animal->id,
+                'etat' => 'en attente',
+            ]);
 
-    public function update(Request $request, $id)
-    {
-        $adoption = Adoption::findOrFail($id);
-        $adoption->update($request->all());
+            // DEBUG: Vérifier que la demande est créée
+            \Log::info('Demande créée:', ['id' => $demande->id, 'user_id' => $demande->user_id, 'animal_id' => $demande->animal_id]);
 
-        return response()->json([
-            'message' => 'Adoption modifiée',
-            'adoption' => $adoption
-        ]);
-    }
+            // Créer l'adoption liée à la demande
+            $adoption = Adoption::create([
+                'user_id' => Auth::id(),
+                'animal_id' => $animal->id,
+                'demande_id' => $demande->id,
+                'date' => now(),
+            ]);
 
-    public function destroy($id)
-    {
-        $adoption = Adoption::findOrFail($id);
-        $adoption->delete();
+            // DEBUG: Vérifier que l'adoption est créée
+            \Log::info('Adoption créée:', ['id' => $adoption->id, 'demande_id' => $adoption->demande_id]);
 
-        return response()->json(['message' => 'Adoption supprimée']);
+            DB::commit();
+
+            return redirect()->back()
+                ->with('success', 'Votre demande d\'adoption a été envoyée avec succès!');
+
+        } catch (\Exception $e) {
+            DB::rollBack();
+            \Log::error('Erreur création adoption:', ['error' => $e->getMessage()]);
+            
+            return redirect()->back()
+                ->with('error', 'Une erreur est survenue lors de l\'envoi de votre demande.');
+        }
     }
 }

@@ -5,7 +5,7 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use App\Http\Controllers\Auth\RegisteredUserController;
 use App\Http\Controllers\AnimalController;
-use App\Http\Controllers\RendezvousController;
+use App\Http\Controllers\HebergementController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\DemandeController;
 use App\Http\Controllers\VetController;
@@ -14,8 +14,13 @@ use App\Http\Controllers\RaceController;
 use App\Http\Controllers\ClientController;
 use App\Http\Controllers\SoinController;
 use App\Http\Controllers\VaccinController;
-
-
+use App\Http\Controllers\AvisController;
+use App\Http\Controllers\RendezvousController;
+use App\Http\Controllers\HomeController;
+use App\Http\Controllers\AdoptionController;
+use App\Http\Controllers\ClientDemandeController;
+use App\Http\Controllers\PaiementController;
+use App\Http\Controllers\CalendarController;
 
 // Pages publiques
 Route::get('/', function () { return view('welcome'); })->name('home');
@@ -113,4 +118,90 @@ Route::middleware('auth')->prefix('vet')->name('vet.')->group(function () {
     Route::resource('soins', App\Http\Controllers\SoinController::class);
     Route::resource('vaccins', App\Http\Controllers\VaccinController::class);
 });
+// ==================== ROUTES CLIENT ====================
+Route::prefix('client')->middleware('auth')->name('client.')->group(function () {
+   // Mes demandes - Adoption et Hébergement
+    Route::prefix('demandes')->name('demandes.')->group(function () {
+        Route::get('/adoption', [ClientController::class, 'demandesAdoption'])->name('adoption');
+        Route::get('/hebergement', [ClientController::class, 'demandesHebergement'])->name('hebergement');
+        Route::get('/hebergement/create', [ClientController::class, 'createHebergement'])->name('hebergement.create');
+        Route::post('/hebergement', [ClientController::class, 'storeHebergement'])->name('hebergement.store');
+        Route::delete('/hebergement/{demande}', [ClientController::class, 'destroyHebergement'])
+    ->name('hebergement.destroy');
 
+
+    });
+    // Dans le groupe des routes client (après les demandes)
+Route::get('/rendez-vous', [ClientController::class, 'rendezVous'])->name('rendez-vous');
+    Route::get('/rendez-vous/create', [ClientController::class, 'createRendezVous'])->name('rendez-vous.create');
+    Route::post('/rendez-vous', [ClientController::class, 'storeRendezVous'])->name('rendez-vous.store');
+    Route::delete('/rendez-vous/{id}', [ClientController::class, 'annulerRendezVous'])->name('rendez-vous.annuler');
+    Route::resource('avis', \App\Http\Controllers\Client\AvisClientController::class);
+});
+
+// ==================== FIN ROUTES CLIENT ====================
+
+Route::middleware(['auth'])->group(function () {
+    Route::get('/avis', [AvisController::class, 'index'])->name('avis.index');
+    Route::delete('/avis/{id}', [AvisController::class, 'destroy'])->name('avis.destroy');
+});
+//vet
+Route::middleware(['auth'])->group(function () {
+    Route::get('/vet/rendezvous', [RendezvousController::class, 'index'])->name('vet.rendezvous.index');
+    Route::get('/vet/rendezvous/{id}', [RendezvousController::class, 'show'])->name('vet.rendezvous.show');
+    Route::post('/vet/rendezvous/{id}/accept', [RendezvousController::class, 'accept'])->name('vet.rendezvous.accept');
+    Route::post('/vet/rendezvous/{id}/refuse', [RendezvousController::class, 'refuse'])->name('vet.rendezvous.refuse');
+});
+// routes/web.php
+Route::get('/client/demandes/hebergement', [ClientController::class, 'demandesHebergement'])->name('client.demandes.hebergement');
+Route::get('/client/demandes/adoption', [ClientController::class, 'demandesAdoption'])->name('client.demandes.adoption');
+
+
+Route::get('/', [HomeController::class, 'index'])->name('home');
+
+
+Route::post('/demande-adopter/{animal}', [AdoptionController::class, 'demandeAdopter'])
+    ->name('demande.adopter');
+    Route::get('/test-adoption/{animal}', function (Animal $animal) {
+    return view('test-adoption', compact('animal'));
+});
+
+Route::post('/test-adoption/{animal}', [AdoptionController::class, 'demandeAdopter']);
+Route::prefix('admin')->middleware(['auth', 'admin'])->group(function () {
+});
+
+
+
+
+Route::prefix('admin')->middleware(['auth'])->group(function () {
+    // GET - Afficher la liste
+    Route::get('/paiements', [PaiementController::class, 'index'])->name('admin.paiements.index');
+    
+    // GET - Afficher le formulaire de création
+    Route::get('/paiements/create', [PaiementController::class, 'create'])->name('admin.paiements.create');
+    
+    // POST - Enregistrer le nouveau paiement
+    Route::post('/paiements', [PaiementController::class, 'store'])->name('admin.paiements.store');
+    
+    // GET - Afficher le formulaire d'édition
+    Route::get('/paiements/{id}/edit', [PaiementController::class, 'edit'])->name('admin.paiements.edit');
+    
+    // PUT - Mettre à jour le paiement
+    Route::put('/paiements/{id}', [PaiementController::class, 'update'])->name('admin.paiements.update');
+    
+    // DELETE - Supprimer le paiement
+    Route::delete('/paiements/{id}', [PaiementController::class, 'destroy'])->name('admin.paiements.destroy');
+});
+Route::get('/auth/google', [CalendarController::class, 'redirectToGoogle'])
+    ->name('google.calendar.connect');
+    
+Route::get('/auth/google/callback', [CalendarController::class, 'handleGoogleCallback'])
+    ->name('google.calendar.callback');
+Route::get('/vet/calendar', function () {
+    return view('vet.calendar');
+})->name('vet.calendar');
+
+Route::get(uri: '/google/events', action: [App\Http\Controllers\CalendarController::class, 'getEvents'])->name(name: 'google.getEvents');
+Route::get(uri: '/google/events/create', action: [App\Http\Controllers\CalendarController::class, 'createEvent'])->name(name: 'google.createEvent');
+Route::get(uri: 'auth/google/calendar/callback', action: [App\Http\Controllers\CalendarController::class, 'callback'])->name(name: 'google.callback');
+Route::get(uri: 'auth/google/calendar/redirect', action: [App\Http\Controllers\CalendarController::class, 'redirect'])->name(name: 'google.redirect');

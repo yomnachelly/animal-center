@@ -6,17 +6,22 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    public function up(): void
-    {
-        Schema::table('users', function (Blueprint $table) {
-            $table->boolean('verrouiller')->default(0)->after('adresse'); 
-        });
-    }
+public function up(): void
+{
+    Schema::table('users', function (Blueprint $table) {
+        if (!Schema::hasColumn('users', 'verrouiller')) {
+            $table->boolean('verrouiller')->default(0)->after('adresse');
+        }
+    });
+}
 
-    public function down(): void
-    {
-        Schema::table('users', function (Blueprint $table) {
+public function down(): void
+{
+    Schema::table('users', function (Blueprint $table) {
+        if (Schema::hasColumn('users', 'verrouiller')) {
             $table->dropColumn('verrouiller');
-        });
-    }
+        }
+    });
+}
+
 };

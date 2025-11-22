@@ -4,7 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class Animal extends Model
+class Animal extends Model 
 {
     protected $fillable = [
         'nom',
@@ -25,5 +25,10 @@ class Animal extends Model
     public function race()
     {
         return $this->belongsTo(Race::class);
+    }
+    // AJOUTEZ CETTE RELATION
+    public function demandes()
+    {
+        return $this->hasMany(Demande::class);
     }
 }
