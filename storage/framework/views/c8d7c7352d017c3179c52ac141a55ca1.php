@@ -215,5 +215,4 @@ document.addEventListener('click', function(event) {
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
-</html>
-<?php /**PATH C:\projet d'integration\animal-center-main\resources\views/layouts/app.blade.php ENDPATH**/ ?>
+</html><?php /**PATH C:\projet d'integration\animal-center-main\resources\views/layouts/app.blade.php ENDPATH**/ ?>

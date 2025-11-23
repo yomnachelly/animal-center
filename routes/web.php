@@ -21,7 +21,12 @@ use App\Http\Controllers\AdoptionController;
 use App\Http\Controllers\ClientDemandeController;
 use App\Http\Controllers\PaiementController;
 use App\Http\Controllers\CalendarController;
-
+use App\Http\Controllers\VetDashboardController;
+use App\Http\Controllers\AdminDashboardController;
+use App\Http\Controllers\Auth\EmailVerificationPromptController;
+use App\Http\Controllers\Auth\EmailVerificationNotificationController;
+use App\Http\Controllers\Auth\VerifyEmailController;
+use App\Http\Controllers\Auth\PasswordController;
 // Pages publiques
 Route::get('/', function () { return view('welcome'); })->name('home');
 Route::get('/login', function () { return view('auth.login'); })->name('login');
@@ -37,6 +42,20 @@ Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+
+    Route::get('/verify-email', EmailVerificationPromptController::class)
+                ->name('verification.notice');
+
+    // CORRECTION : Utiliser VerifyEmailController au lieu de EmailVerificationPromptController
+    Route::get('/verify-email/{id}/{hash}', VerifyEmailController::class)
+                ->middleware(['signed', 'throttle:6,1'])
+                ->name('verification.verify');
+
+    Route::post('/email/verification-notification', [EmailVerificationNotificationController::class, 'store'])
+                ->middleware('throttle:6,1')
+                ->name('verification.send');
+                    // Routes de mot de passe
+    Route::put('/password', [PasswordController::class, 'update'])->name('password.update');
 });
 
 Route::middleware('auth')->group(function () {
@@ -205,3 +224,8 @@ Route::get(uri: '/google/events', action: [App\Http\Controllers\CalendarControll
 Route::get(uri: '/google/events/create', action: [App\Http\Controllers\CalendarController::class, 'createEvent'])->name(name: 'google.createEvent');
 Route::get(uri: 'auth/google/calendar/callback', action: [App\Http\Controllers\CalendarController::class, 'callback'])->name(name: 'google.callback');
 Route::get(uri: 'auth/google/calendar/redirect', action: [App\Http\Controllers\CalendarController::class, 'redirect'])->name(name: 'google.redirect');
+Route::get('/vet/dashboard', [VetDashboardController::class, 'index'])->name('vet.dashboard');
+Route::get('/admin/dashboard', [AdminDashboardController::class, 'index'])->name('admin.dashboard');
+Route::post('/client/notifications/{id}/marquer-lu', [ClientController::class, 'marquerCommeLu'])->name('client.notifications.marquer-lu');
+use App\Http\Controllers\FactureController;
+Route::get('/facture/{hebergement}', [FactureController::class, 'generer'])->name('facture.generer');

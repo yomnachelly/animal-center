@@ -12,7 +12,15 @@ class RendezvousController extends Controller
     // Afficher tous les rendez-vous pour le vétérinaire
     public function index()
     {
+        $vetId = Auth::id();
+        
         $rendezvous = Rendezvous::with(['user', 'animal', 'soins', 'vaccins'])
+            ->whereHas('soins', function($query) use ($vetId) {
+                $query->where('vet_id', $vetId);
+            })
+            ->orWhereHas('vaccins', function($query) use ($vetId) {
+                $query->where('vet_id', $vetId);
+            })
             ->orderBy('date', 'desc')
             ->get();
 

@@ -346,4 +346,11 @@ public function annulerRendezVous($id)
                          ->with('error', 'Une erreur est survenue lors de l\'annulation.');
     }
 }
+public function marquerCommeLu($id)
+{
+    $notification = Notification::findOrFail($id);
+    $notification->update(['is_read' => true]);
+    
+    return back()->with('success', 'Notification marquée comme lue.');
+}
 }

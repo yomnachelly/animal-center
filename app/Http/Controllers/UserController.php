@@ -9,11 +9,23 @@ use Illuminate\Support\Facades\Hash;
 
 class UserController extends Controller
 {
-    // Liste des utilisateurs
-    public function index()
+    // Liste des utilisateurs avec filtrage
+    public function index(Request $request)
     {
-        $users = User::all();
-        return view('admin.users.index', compact('users'));
+        // Récupérer le filtre de rôle depuis la requête
+        $role = $request->get('role');
+        
+        // Construire la requête avec filtre optionnel
+        $usersQuery = User::query();
+        
+        if ($role) {
+            $usersQuery->where('role', $role);
+        }
+        
+        // Trier par date de création (plus récents en premier)
+        $users = $usersQuery->orderBy('created_at', 'desc')->get();
+
+        return view('admin.users.index', compact('users', 'role'));
     }
 
     // Formulaire création utilisateur
@@ -69,7 +81,6 @@ class UserController extends Controller
 
         return redirect()->route('admin.users.index')->with('success', 'Utilisateur modifié avec succès.');
     }
-
 
     // Verrouiller un utilisateur
     public function verrouiller(User $user)

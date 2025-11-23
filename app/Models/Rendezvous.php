@@ -1,29 +1,24 @@
 <?php
 
 namespace App\Models;
+
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Rendezvous extends Model
+class RendezVous extends Model
 {
+    use HasFactory;
+     protected $table = 'rendezvous';
+    protected $fillable = ['user_id','animal_id', 'date', 'etat'];
 
-    // Indiquer explicitement le nom de la table
-    protected $table = 'rendezvous';
-     use HasFactory;
-
-    protected $fillable = [
-        'user_id',      // ← AJOUTEZ CETTE LIGNE
-        'animal_id',
-        'date', 
-        'etat'
-    ];
- // Cast la date en objet Carbon
-    protected $casts = [
-        'date' => 'date'
-    ];
-    public function user()
+    public function soins()
     {
-        return $this->belongsTo(User::class);
+        return $this->belongsToMany(Soin::class, 'rendezvous_soin', 'rendezvous_id', 'soin_id');
+    }
+
+    public function vaccins()
+    {
+        return $this->belongsToMany(Vaccin::class, 'rendezvous_vaccin', 'rendezvous_id', 'vaccin_id');
     }
 
     public function animal()
@@ -31,13 +26,8 @@ class Rendezvous extends Model
         return $this->belongsTo(Animal::class);
     }
 
-    public function soins()
+    public function user()
     {
-        return $this->belongsToMany(Soin::class, 'rendezvous_soin');
-    }
-
-    public function vaccins()
-    {
-        return $this->belongsToMany(Vaccin::class, 'rendezvous_vaccin');
+        return $this->belongsTo(User::class);
     }
 }
