@@ -71,6 +71,7 @@
             font-size: 0.9rem;
             text-transform: uppercase;
             letter-spacing: 0.5px;
+            text-align: center;
         }
         
         .animals-table tbody tr {
@@ -88,6 +89,7 @@
             padding: 20px 15px;
             vertical-align: middle;
             font-size: 0.95rem;
+            text-align: center;
         }
         
         .animal-name {
@@ -95,6 +97,7 @@
             color: #28a745;
             display: flex;
             align-items: center;
+            justify-content: flex-start;
         }
         
         .animal-avatar {
@@ -140,6 +143,7 @@
             min-height: 40px;
             display: flex;
             align-items: center;
+            justify-content: center;
         }
         
         .sexe-badge {
@@ -235,6 +239,7 @@
             display: flex;
             gap: 8px;
             flex-wrap: wrap;
+            justify-content: center;
         }
         
         .btn-edit {
@@ -373,6 +378,74 @@
             box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
         }
         
+        /* Styles ajustés pour les colonnes */
+        .column-badge {
+            padding: 8px 15px;
+            border-radius: 15px;
+            font-weight: 600;
+            font-size: 0.85rem;
+            display: inline-block;
+            min-width: 70px;
+            text-align: center;
+        }
+        
+        .species-column {
+            background: linear-gradient(135deg, #17a2b8, #138496);
+            color: white;
+        }
+        
+        .sexe-column {
+            background: linear-gradient(135deg, #6f42c1, #8e44ad);
+            color: white;
+        }
+        
+        .status-column {
+            background: linear-gradient(135deg, #28a745, #20c997);
+            color: white;
+        }
+        
+        .action-buttons-column {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        
+        .btn-action {
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-weight: 500;
+            font-size: 0.85rem;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            min-width: 90px;
+            justify-content: center;
+            border: none;
+            text-decoration: none;
+        }
+        
+        .btn-modifier {
+            background: linear-gradient(135deg, #ffc107, #ffb300);
+            color: #212529;
+        }
+        
+        .btn-modifier:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(255, 193, 7, 0.4);
+            color: #212529;
+        }
+        
+        .btn-supprimer {
+            background: linear-gradient(135deg, #dc3545, #e35d6a);
+            color: white;
+        }
+        
+        .btn-supprimer:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(220, 53, 69, 0.4);
+        }
+        
         @media (max-width: 1200px) {
             .animals-table {
                 overflow-x: auto;
@@ -389,7 +462,7 @@
                 text-align: center;
             }
             
-            .action-buttons {
+            .action-buttons-column {
                 flex-direction: column;
             }
             
@@ -414,14 +487,14 @@
             .sexe-badge,
             .age-badge,
             .health-status,
-            .status-badge {
+            .status-badge,
+            .column-badge {
                 min-width: 70px;
                 padding: 6px 10px;
                 font-size: 0.8rem;
             }
             
-            .btn-edit,
-            .btn-delete {
+            .btn-action {
                 min-width: 80px;
                 padding: 6px 12px;
             }
@@ -489,15 +562,15 @@
                 <table class="table table-hover mb-0">
                     <thead>
                         <tr>
-                            <th style="width: 18%;">Animal</th>
-                            <th style="width: 12%;">Espèce</th>
-                            <th style="width: 14%;">Race</th>
-                            <th style="width: 10%;">Sexe</th>
-                            <th style="width: 10%;">Âge</th>
+                            <th style="width: 15%;">Animal</th>
+                            <th style="width: 30%;">Espèce</th>
+                            <th style="width: 12%;">Race</th>
+                            <th style="width: 30%;">Sexe</th>
+                            <th style="width: 8%;">Âge</th>
                             <th style="width: 12%;">État santé</th>
-                            <th style="width: 12%;">Statut</th>
-                            <th style="width: 12%;">Photo</th>
-                            <th style="width: 12%;">Actions</th>
+                            <th style="width: 100%;">Statut</th>
+                            <th style="width: 10%;">Photo</th>
+                            <th style="width: 15%;">Actions</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -516,7 +589,7 @@
                                     </div>
                                 </td>
                                 <td>
-                                    <span class="species-badge">
+                                    <span class="column-badge species-column">
                                         <i class="fas 
                                             @if($animal->espece->nom == 'Chien') fa-dog 
                                             @elseif($animal->espece->nom == 'Chat') fa-cat 
@@ -532,7 +605,7 @@
                                     </div>
                                 </td>
                                 <td>
-                                    <span class="sexe-badge {{ $animal->sexe === 'Mâle' ? 'sexe-male' : 'sexe-femelle' }}">
+                                    <span class="column-badge sexe-column">
                                         <i class="fas {{ $animal->sexe === 'Mâle' ? 'fa-mars' : 'fa-venus' }} me-1"></i>
                                         {{ $animal->sexe }}
                                     </span>
@@ -575,7 +648,7 @@
                                             default => 'fa-home'
                                         };
                                     @endphp
-                                    <span class="status-badge {{ $statusClass }}">
+                                    <span class="column-badge status-column">
                                         <i class="fas {{ $statusIcon }} me-1"></i>
                                         {{ $animal->statut }}
                                     </span>
@@ -594,8 +667,8 @@
                                     </div>
                                 </td>
                                 <td>
-                                    <div class="action-buttons">
-                                        <a href="{{ route('animaux.edit', $animal) }}" class="btn-edit">
+                                    <div class="action-buttons-column">
+                                        <a href="{{ route('animaux.edit', $animal) }}" class="btn-action btn-modifier">
                                             <i class="fas fa-edit me-1"></i>Modifier
                                         </a>
 
@@ -604,7 +677,7 @@
                                             @csrf
                                             @method('DELETE')
                                             <button type="submit" 
-                                                    class="btn-delete"
+                                                    class="btn-action btn-supprimer"
                                                     onclick="return confirm('Voulez-vous vraiment supprimer {{ $animal->nom }} ? Cette action est irréversible.')">
                                                 <i class="fas fa-trash me-1"></i>Supprimer
                                             </button>

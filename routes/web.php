@@ -27,6 +27,7 @@ use App\Http\Controllers\Auth\EmailVerificationPromptController;
 use App\Http\Controllers\Auth\EmailVerificationNotificationController;
 use App\Http\Controllers\Auth\VerifyEmailController;
 use App\Http\Controllers\Auth\PasswordController;
+use App\Http\Controllers\PaymeeController;
 // Pages publiques
 Route::get('/', function () { return view('welcome'); })->name('home');
 Route::get('/login', function () { return view('auth.login'); })->name('login');
@@ -229,3 +230,29 @@ Route::get('/admin/dashboard', [AdminDashboardController::class, 'index'])->name
 Route::post('/client/notifications/{id}/marquer-lu', [ClientController::class, 'marquerCommeLu'])->name('client.notifications.marquer-lu');
 use App\Http\Controllers\FactureController;
 Route::get('/facture/{hebergement}', [FactureController::class, 'generer'])->name('facture.generer');
+Route::prefix('client')->middleware('auth')->name('client.')->group(function () {
+    Route::prefix('demandes')->name('demandes.')->group(function () {
+        Route::get('/adoption', [ClientController::class, 'demandesAdoption'])->name('adoption');
+        Route::get('/hebergement', [ClientController::class, 'demandesHebergement'])->name('hebergement');
+        Route::get('/hebergement/create', [ClientController::class, 'createHebergement'])->name('hebergement.create');
+        Route::post('/hebergement', [ClientController::class, 'storeHebergement'])->name('hebergement.store');
+        Route::delete('/hebergement/{demande}', [ClientController::class, 'destroyHebergement'])
+            ->name('hebergement.destroy');
+    });
+    Route::get('/paiement/{hebergement}', [PaiementController::class, 'show'])->name('payer');
+});
+ Route::get('/rendez-vous/create', [ClientController::class, 'createRendezVous'])
+        ->name('rendez-vous.create');
+Route::get('/client/rendez-vous-create', [ClientController::class, 'createRendezVous'])->name('client.rendez-vous.create');
+Route::post('/client/rendez-vous', [ClientController::class, 'storeRendezVous'])->name('client.rendez-vous.store');
+Route::post('/paymee/pay/{id}', [PaymeeController::class, 'createPayment'])->name('paymee.pay');
+Route::get('/paymee/success', [PaymeeController::class, 'success'])->name('paymee.success');
+Route::get('/paymee/cancel', [PaymeeController::class, 'cancel'])->name('paymee.cancel');
+Route::post('/paymee/webhook', [PaymeeController::class, 'webhook'])->withoutMiddleware(['csrf']);
+use App\Http\Controllers\StripeController;
+
+Route::post('/paiement/hebergement/{id}', [StripeController::class, 'payer'])
+    ->name('payer.hebergement');
+
+Route::get('/paiement/success', [StripeController::class, 'success'])->name('stripe.success');
+Route::get('/paiement/cancel', [StripeController::class, 'cancel'])->name('stripe.cancel');

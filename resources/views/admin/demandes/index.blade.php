@@ -412,7 +412,6 @@
                 $totalDemandes = $demandes->count();
                 $adoptionCount = $demandes->where('type', 'adoption')->count();
                 $hebergementCount = $demandes->where('type', 'hebergement')->count();
-                $demandeCount = $demandes->where('type', 'demande')->count();
                 $enAttenteCount = $demandes->where('etat', 'en attente')->count();
                 $accepteCount = $demandes->where('etat', 'accepte')->count();
                 $rejeteCount = $demandes->where('etat', 'rejete')->count();
@@ -465,7 +464,7 @@
                         <tr>
                             <th style="width: 20%;">Utilisateur</th>
                             <th style="width: 20%;">Animal</th>
-                            <th style="width: 15%;">Type</th>
+                            <th style="width: 22%;">Type</th>
                             <th style="width: 15%;">État</th>
                             <th style="width: 30%;">Actions</th>
                         </tr>
@@ -598,6 +597,8 @@
         
         // Fonction pour appliquer le filtre
         function applyFilter(filter) {
+            console.log('Applying filter:', filter);
+            
             // Mettre à jour les boutons de filtre
             filterButtons.forEach(btn => {
                 if (btn.dataset.filter === filter) {
@@ -617,38 +618,40 @@
             });
             
             // Filtrer les demandes
+            let visibleCount = 0;
             demandeItems.forEach(item => {
-                if (filter === 'all' || item.classList.contains(filter)) {
+                if (filter === 'all' || 
+                    item.classList.contains(filter) || 
+                    item.getAttribute('data-type') === filter || 
+                    item.getAttribute('data-etat') === filter) {
                     item.style.display = '';
+                    visibleCount++;
                 } else {
                     item.style.display = 'none';
                 }
             });
             
-            // Afficher un message si aucun résultat
-            const visibleItems = document.querySelectorAll('.demande-item[style=""]');
-            const emptyState = document.querySelector('.empty-state');
+            console.log('Visible items:', visibleCount);
             
-            if (visibleItems.length === 0 && emptyState) {
-                if (!document.querySelector('.no-results')) {
-                    const noResults = document.createElement('div');
-                    noResults.className = 'empty-state no-results';
-                    noResults.innerHTML = `
-                        <div class="empty-state-icon">
-                            <i class="fas fa-search"></i>
+            // Afficher/cacher le message "Aucun résultat"
+            const existingNoResults = document.querySelector('.no-results-message');
+            if (existingNoResults) {
+                existingNoResults.remove();
+            }
+            
+            if (visibleCount === 0 && demandeItems.length > 0) {
+                const noResults = document.createElement('tr');
+                noResults.className = 'no-results-message';
+                noResults.innerHTML = `
+                    <td colspan="5" style="text-align: center; padding: 40px;">
+                        <div style="color: #6c757d;">
+                            <i class="fas fa-search" style="font-size: 3rem; margin-bottom: 15px;"></i>
+                            <h4 style="margin-bottom: 10px;">Aucune demande trouvée</h4>
+                            <p>Aucune demande ne correspond aux critères de filtrage sélectionnés.</p>
                         </div>
-                        <h3 class="empty-state-title">Aucune demande trouvée</h3>
-                        <p class="empty-state-text">
-                            Aucune demande ne correspond aux critères de filtrage sélectionnés.
-                        </p>
-                    `;
-                    document.querySelector('.demandes-table').appendChild(noResults);
-                }
-            } else {
-                const noResults = document.querySelector('.no-results');
-                if (noResults) {
-                    noResults.remove();
-                }
+                    </td>
+                `;
+                document.querySelector('#demandes-list').appendChild(noResults);
             }
         }
         

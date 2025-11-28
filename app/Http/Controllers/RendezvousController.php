@@ -37,24 +37,28 @@ class RendezvousController extends Controller
     }
 
     // Accepter un rendez-vous
-    public function accept($id)
-    {
-        $this->authorizeVet();
+// Accepter un rendez-vous
+public function accept($id)
+{
+    $this->authorizeVet();
 
-        $rendezvous = Rendezvous::findOrFail($id);
-        $rendezvous->etat = 'accepté';
-        $rendezvous->save();
+    $rendezvous = Rendezvous::findOrFail($id);
+    $rendezvous->etat = 'accepté';
+    $rendezvous->save();
 
-        // Notification via NotificationApp
-        NotificationApp::create([
-            'id_expediteur' => Auth::id(),
-            'id_destinataire' => $rendezvous->user_id,
-            'contenu' => "Votre rendez-vous du " . $rendezvous->date->format('d/m/Y') . " a été accepté.",
-            'date' => now(),
-        ]);
+    // Convertir la date en objet Carbon pour le formatage
+    $dateRendezvous = \Carbon\Carbon::parse($rendezvous->date);
 
-        return redirect()->back()->with('success', 'Rendez-vous accepté.');
-    }
+    // Notification via NotificationApp
+    NotificationApp::create([
+        'id_expediteur' => Auth::id(),
+        'id_destinataire' => $rendezvous->user_id,
+        'contenu' => "Votre rendez-vous du " . $dateRendezvous->format('d/m/Y') . " a été accepté.",
+        'date' => now(),
+    ]);
+
+    return redirect()->back()->with('success', 'Rendez-vous accepté.');
+}
 
     // Refuser un rendez-vous et proposer une nouvelle date
     public function refuse(Request $request, $id)

@@ -366,11 +366,11 @@
             <div class="info-header">
                 <h2 class="info-title">
                     <i class="fas fa-user-circle"></i>
-                    Mes Informations Personnelles
+                    Mes Informations Personnelles 
                 </h2>
                 <a href="{{ route('profile.edit') }}" class="btn-edit-custom">
                     <i class="fas fa-edit"></i>
-                    Modifier
+                      Modifier
                 </a>
             </div>
             

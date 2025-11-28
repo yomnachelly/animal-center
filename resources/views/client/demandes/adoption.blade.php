@@ -622,7 +622,7 @@
                 </div>
                 <h3 class="empty-state-title">Aucune demande d'adoption</h3>
                 <p class="empty-state-text">Vous n'avez encore fait aucune demande d'adoption. Découvrez nos animaux qui cherchent une famille aimante !</p>
-                <a href="{{ route('animaux.index') }}" class="btn-primary-custom mt-3">
+               <a href="{{ route('home') }}#animaux" class="btn-primary-custom mt-3">
                     <i class="fas fa-paw"></i>
                     Voir les animaux disponibles
                 </a>

@@ -8,11 +8,28 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 
     <style>
+        /* Correction principale : navbar fixe */
+        .navbar {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            z-index: 1030; /* Assure que la navbar est au-dessus du contenu */
+        }
+        
+        /* Ajustement du contenu pour compenser la hauteur de la navbar fixe */
+        body {
+            padding-top: 76px; /* Hauteur approximative de la navbar */
+        }
+        
         .sidebar {
             min-height: 80vh;
             border-right: 1px solid rgba(0,0,0,.1);
             padding-top: 1rem;
             background-color: #f8f9fa;
+            position: sticky;
+            top: 76px; /* S'aligne avec la navbar fixe */
+            height: calc(100vh - 76px);
+            overflow-y: auto;
         }
         .sidebar a {
             display: block;
@@ -34,62 +51,58 @@
         }
         .nav-brand { font-weight: 600; letter-spacing: .4px; }
         .dropdown {
-    position: relative;
-    display: inline-block;
-}
-.dropdown {
-    position: relative;
-    display: inline-block;
-}
+            position: relative;
+            display: inline-block;
+        }
 
-.dropdown-menu {
-    display: none;
-    position: absolute;
-    background-color: white;
-    min-width: 200px;
-    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
-    z-index: 1;
-    border-radius: 4px;
-}
+        .dropdown-menu {
+            display: none;
+            position: absolute;
+            background-color: white;
+            min-width: 200px;
+            box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+            z-index: 1;
+            border-radius: 4px;
+        }
 
-.dropdown-menu a {
-    display: block;
-    padding: 10px 15px;
-    text-decoration: none;
-    color: #333;
-    border-bottom: 1px solid #eee;
-}
+        .dropdown-menu a {
+            display: block;
+            padding: 10px 15px;
+            text-decoration: none;
+            color: #333;
+            border-bottom: 1px solid #eee;
+        }
 
-.dropdown-menu a:hover {
-    background-color: #3811e4ff;
-}
+        .dropdown-menu a:hover {
+            background-color: #3811e4ff;
+        }
 
-/* Classe pour garder le menu ouvert */
-.dropdown-menu.show {
-    display: block !important;
-}
+        /* Classe pour garder le menu ouvert */
+        .dropdown-menu.show {
+            display: block !important;
+        }
 
-/* Ancien hover - vous pouvez le supprimer ou garder */
-.dropdown:hover .dropdown-menu {
-    display: block;
-}
+        /* Ancien hover - vous pouvez le supprimer ou garder */
+        .dropdown:hover .dropdown-menu {
+            display: block;
+        }
     </style>
    <script>
     function toggleDropdown() {
-    event.preventDefault();
-    const menu = document.getElementById('demandesMenu');
-    menu.classList.toggle('show');
-}
-
-// Fermer le menu si on clique ailleurs sur la page
-document.addEventListener('click', function(event) {
-    const dropdown = document.getElementById('demandesDropdown');
-    const menu = document.getElementById('demandesMenu');
-    
-    if (!dropdown.contains(event.target)) {
-        menu.classList.remove('show');
+        event.preventDefault();
+        const menu = document.getElementById('demandesMenu');
+        menu.classList.toggle('show');
     }
-});
+
+    // Fermer le menu si on clique ailleurs sur la page
+    document.addEventListener('click', function(event) {
+        const dropdown = document.getElementById('demandesDropdown');
+        const menu = document.getElementById('demandesMenu');
+        
+        if (!dropdown.contains(event.target)) {
+            menu.classList.remove('show');
+        }
+    });
    </script>
 </head>
 <body>
@@ -180,27 +193,25 @@ document.addEventListener('click', function(event) {
                         <a href="{{ route('vet.rendezvous.index') }}"  class="{{ request()->routeIs('vet.rendezvous.*') ? 'active' : '' }}"><i class="fa-solid fa-calendar-check"></i> rendezvous</a>
                         <a href="{{ route('vet.calendar') }}" class="{{ request()->routeIs('vet.calendar') ? 'active' : '' }}"><i class="fas fa-calendar-alt"></i> Calendrier</a>
                         @break
-                        @break
 
                     @default {{-- client --}}
                         <a href="{{ route('client.dashboard') }}" class="{{ request()->routeIs('client.dashboard') ? 'active' : '' }}"><i class="fa-solid fa-gauge"></i> Dashboard</a>
-                        <a href="{{ route('client.notifications') }}" class="{{ request()->routeIs('client.notifications') ? 'active' : '' }}"><i class="fa-solid fa-bell"></i>
- Notifications</a>
+                        <a href="{{ route('client.notifications') }}" class="{{ request()->routeIs('client.notifications') ? 'active' : '' }}"><i class="fa-solid fa-bell"></i> Notifications</a>
                        <a href="{{ route('client.rendez-vous') }}" class="{{ request()->routeIs('client.rendez-vous') ? 'active' : '' }}"><i class="fa-solid fa-calendar-check"></i> mes rendez vous</a>
                        <a href="{{ route('client.avis.index') }}" class="{{ request()->routeIs('client.avis.*') ? 'active' : '' }}"><i class="fa-solid fa-star"></i> Mes Avis</a>
                         <div class="dropdown" id="demandesDropdown">
-    <a href="#" class="dropdown-toggle {{ request()->routeIs('client.demandes.*') ? 'active' : '' }}" onclick="toggleDropdown()">
-        <i class="fa-solid fa-file-lines"></i> mes demandes
-    </a>
-    <div class="dropdown-menu" id="demandesMenu">
-        <a href="{{ route('client.demandes.adoption') }}" class="{{ request()->routeIs('client.demandes.adoption') ? 'active' : '' }}">
-            <i class="fa-solid fa-paw"></i> Adoption
-        </a>
-        <a href="{{ route('client.demandes.hebergement') }}" class="{{ request()->routeIs('client.demandes.hebergement') ? 'active' : '' }}">
-            <i class="fa-solid fa-house-user"></i> Hébergement
-        </a>
-    </div>
-</div>
+                            <a href="#" class="dropdown-toggle {{ request()->routeIs('client.demandes.*') ? 'active' : '' }}" onclick="toggleDropdown()">
+                                <i class="fa-solid fa-file-lines"></i> mes demandes
+                            </a>
+                            <div class="dropdown-menu" id="demandesMenu">
+                                <a href="{{ route('client.demandes.adoption') }}" class="{{ request()->routeIs('client.demandes.adoption') ? 'active' : '' }}">
+                                    <i class="fa-solid fa-paw"></i> Adoption
+                                </a>
+                                <a href="{{ route('client.demandes.hebergement') }}" class="{{ request()->routeIs('client.demandes.hebergement') ? 'active' : '' }}">
+                                    <i class="fa-solid fa-house-user"></i> Hébergement
+                                </a>
+                            </div>
+                        </div>
                 @endswitch
             @endauth
         </div>

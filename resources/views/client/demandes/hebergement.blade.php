@@ -552,11 +552,13 @@
                                                     Annuler
                                                 </button>
                                             </form>
-                                        @elseif($etat == 'accepte' && $demandeId)
-                                            <a href="#" class="btn-pay">
-                                                <i class="fas fa-credit-card"></i>
-                                                Payer
-                                            </a>
+                                                                         @elseif($etat == 'accepte' && $demandeId)
+   <form action="{{ route('payer.hebergement', $hebergement->id) }}" method="POST">
+        @csrf
+        <button type="submit" class="btn-pay">
+            <i class="fas fa-credit-card"></i> Payer
+        </button>
+    </form>
                                                 <a href="{{ route('facture.generer', $hebergement->id) }}"class="btn-pay">
                                                 <i class="fas fa-download"></i>
                                                 exporter facture en pdf

@@ -458,10 +458,10 @@
                         <tr>
                             <th style="width: 20%;">Utilisateur</th>
                             <th style="width: 20%;">Email</th>
-                            <th style="width: 12%;">Rôle</th>
+                            <th style="width: 20%;">Rôle</th>
                             <th style="width: 13%;">Téléphone</th>
                             <th style="width: 15%;">Adresse</th>
-                            <th style="width: 10%;">Statut</th>
+                            <th style="width: 100%;">Statut</th>
                             <th style="width: 20%;">Actions</th>
                         </tr>
                     </thead>

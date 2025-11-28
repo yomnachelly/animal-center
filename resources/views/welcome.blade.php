@@ -369,12 +369,7 @@
 
 <div class="container mt-4">
     <div class="row">
-        {{-- Colonne principale : Soins/Vaccins, Animaux et Avis --}}
         <div class="col-md-8">
-
-
-
-            {{-- Section des animaux à adopter --}}
             <div class="mt-5" id="animaux">
                 <h2 class="section-title">Animaux à adopter</h2>
 
@@ -430,12 +425,6 @@
                                 </div>
                             </div>
                         @endforeach
-                    </div>
-
-                    <div class="text-center mt-4">
-                        <a href="{{ route('animaux.index') }}" class="btn btn-outline-primary">
-                            <i class="fas fa-paw me-1"></i> Voir tous les animaux
-                        </a>
                     </div>
                 @else
                     <div class="alert alert-info text-center">
@@ -497,7 +486,8 @@
                                 
                                 @auth
                                     <div class="text-center mt-3">
-                                        <a href="{{ route('vet.soins.index') }}" class="btn btn-outline-primary btn-sm">
+                                        {{-- Nouveau code correct --}}
+<a href="{{ route('client.rendez-vous.create', ['type' => 'soin']) }}" class="btn btn-outline-primary btn-sm">
                                             <i class="fas fa-plus me-1"></i> Prendre rendez-vous
                                         </a>
                                     </div>
@@ -554,7 +544,8 @@
                                 
                                 @auth
                                     <div class="text-center mt-3">
-                                        <a href="{{ route('vet.vaccins.index') }}" class="btn btn-outline-primary btn-sm">
+                                       {{-- Nouveau code correct --}}
+<a href="{{ route('client.rendez-vous.create', ['type' => 'vaccin']) }}" class="btn btn-outline-primary btn-sm">
                                             <i class="fas fa-syringe me-1"></i> Vacciner mon animal
                                         </a>
                                     </div>
@@ -619,8 +610,12 @@
             <h2 class="section-title">Services disponibles</h2>
 
             <div class="list-group services-list">
-                <div class="list-group-item"><i class="fas fa-stethoscope"></i> Soin vétérinaire</div>
-                <div class="list-group-item"><i class="fas fa-syringe"></i> Vaccination</div>
+                 <a href="#soins-vaccins" class="list-group-item list-group-item-action">
+                    <i class="fas fa-stethoscope"></i> Soin vétérinaire
+                </a>
+                 <a href="#soins-vaccins" class="list-group-item list-group-item-action">
+                    <i class="fas fa-syringe"></i> Vaccination
+                </a>
                 <div class="list-group-item"><i class="fas fa-home"></i> Hébergement</div>
                 <div class="list-group-item"><i class="fas fa-heart"></i> Adoption</div>
                 <div class="list-group-item"><i class="fas fa-comments"></i> Conseils animaliers</div>
@@ -640,6 +635,18 @@
                         <div class="p-2">
                             <h4 class="mb-1">{{ App\Models\Avis::count() }}</h4>
                             <small>Avis clients</small>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="p-2">
+                            <h4 class="mb-1">{{ App\Models\Soin::count() }}</h4>
+                            <small>Soins disponibles</small>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="p-2">
+                            <h4 class="mb-1">{{ App\Models\Vaccin::count() }}</h4>
+                            <small>Vaccins disponibles</small>
                         </div>
                     </div>
                 </div>
