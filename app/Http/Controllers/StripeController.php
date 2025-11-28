@@ -34,10 +34,10 @@ class StripeController extends Controller
 
         $fraisJour = $paiement->frais_jour;
 
-        // Calcul du nombre de jours
-        $dateDebut = Carbon::parse($hebergement->date_debut);
-        $dateFin = Carbon::parse($hebergement->date_fin);
-        $jours = $dateDebut->diffInDays($dateFin);
+        // Calcul du nombre de jours exactement comme pour le PDF
+        $dateDebut = strtotime($hebergement->date_debut);
+        $dateFin = strtotime($hebergement->date_fin);
+        $jours = ($dateFin - $dateDebut) / (60 * 60 * 24) + 1;
 
         if ($jours <= 0) {
             return back()->with('error', "Les dates d'hébergement sont invalides.");
@@ -47,6 +47,7 @@ class StripeController extends Controller
         $montant = $jours * $fraisJour;      // ex: 5 jours × 30 dt = 150 dt
         $montantStripe = $montant * 100;     // Stripe → centimes
 
+        // Clé API Stripe
         Stripe::setApiKey(config('services.stripe.secret'));
 
         // Créer la session Stripe
@@ -54,7 +55,7 @@ class StripeController extends Controller
             'payment_method_types' => ['card'],
             'line_items' => [[
                 'price_data' => [
-                    'currency' => 'usd',   // tu peux mettre eur ou usd
+                    'currency' => 'usd',   // ou 'eur'
                     'product_data' => [
                         'name' => 'Paiement Hébergement de : ' . $hebergement->animal->nom,
                     ],
