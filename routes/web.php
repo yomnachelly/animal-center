@@ -28,6 +28,10 @@ use App\Http\Controllers\Auth\EmailVerificationNotificationController;
 use App\Http\Controllers\Auth\VerifyEmailController;
 use App\Http\Controllers\Auth\PasswordController;
 use App\Http\Controllers\PaymeeController;
+use App\Http\Controllers\StripeController;
+use Illuminate\Support\Facades\Mail;
+use App\Mail\WelcomeNewUser;
+use App\Models\User;
 // Pages publiques
 Route::get('/', function () { return view('welcome'); })->name('home');
 Route::get('/login', function () { return view('auth.login'); })->name('login');
@@ -249,10 +253,29 @@ Route::post('/paymee/pay/{id}', [PaymeeController::class, 'createPayment'])->nam
 Route::get('/paymee/success', [PaymeeController::class, 'success'])->name('paymee.success');
 Route::get('/paymee/cancel', [PaymeeController::class, 'cancel'])->name('paymee.cancel');
 Route::post('/paymee/webhook', [PaymeeController::class, 'webhook'])->withoutMiddleware(['csrf']);
-use App\Http\Controllers\StripeController;
+
 
 Route::post('/paiement/hebergement/{id}', [StripeController::class, 'payer'])
     ->name('payer.hebergement');
 
 Route::get('/paiement/success', [StripeController::class, 'success'])->name('stripe.success');
 Route::get('/paiement/cancel', [StripeController::class, 'cancel'])->name('stripe.cancel');
+
+// Routes sans middleware pour test
+Route::prefix('admin')->name('admin.')->group(function () {
+    Route::get('/historiques/paiements', [StripeController::class, 'historiques'])->name('historiques.index');
+    Route::get('/historiques/paiements/{id}', [StripeController::class, 'showHistorique'])->name('historiques.show');
+    Route::get('/historiques/paiements/export', [StripeController::class, 'exportHistoriques'])->name('historiques.export');
+    Route::get('/historiques/paiements/search', [StripeController::class, 'searchHistoriques'])->name('historiques.search');
+});
+Route::get('/test-mailtrap', function () {
+    try {
+        \Mail::raw('Test Mailtrap depuis localhost!', function ($message) {
+            $message->to('rktiti832@gmail.com')
+                    ->subject('Test Mailtrap Réussi');
+        });
+        return "Email envoyé avec Mailtrap! Vérifiez votre inbox Mailtrap.";
+    } catch (\Exception $e) {
+        return "Erreur: " . $e->getMessage();
+    }
+});

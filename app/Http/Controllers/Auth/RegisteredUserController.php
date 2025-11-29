@@ -11,7 +11,9 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rules;
 use Illuminate\View\View;
-
+use Illuminate\Support\Facades\Mail;
+use App\Mail\WelcomeNewUser;
+use Illuminate\Support\Facades\Log;
 class RegisteredUserController extends Controller
 {
     /**
@@ -47,12 +49,16 @@ public function store(Request $request)
         'adresse' => $request->adresse,
     ]);
 
-    // On NE connecte plus automatiquement l'utilisateur
-    // Auth::login($user);  ← supprimer ou commenter cette ligne
+    // Envoi de l'email de bienvenue
+    try {
+        Mail::to($user->email)->send(new WelcomeNewUser($user));
+        Log::info('Email de bienvenue envoyé à: ' . $user->email); // ← AJOUT
+    } catch (\Exception $e) {
+        Log::error('Erreur envoi email welcome: '.$e->getMessage());
+    }
 
-    // Redirection vers la page de login avec message
-    return redirect()->route('login')->with('success', 'Inscription réussie, connectez-vous !');
+    return redirect()->route('login')
+        ->with('success', 'Inscription réussie ! Un email de bienvenue vous a été envoyé.');
 }
-
 
 }

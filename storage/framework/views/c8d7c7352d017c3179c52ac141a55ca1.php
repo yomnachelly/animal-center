@@ -185,6 +185,7 @@
                         <a href="<?php echo e(route('especes.index')); ?>" class="<?php echo e(request()->routeIs('especes.*') ? 'active' : ''); ?>"><i class="fa-solid fa-shapes"></i> Espéces</a>
                         <a href="<?php echo e(route('avis.index')); ?>" class="<?php echo e(request()->routeIs('avis.*') ? 'active' : ''); ?>"><i class="fa-solid fa-star"></i> avis</a>
                         <a href="<?php echo e(route('admin.paiements.index')); ?>" class="<?php echo e(request()->routeIs('admin.paiements.*') ? 'active' : ''); ?>"><i class="fa-solid fa-money-bill-wave"></i> Frais de Paiements</a>
+                <a href="<?php echo e(route('admin.historiques.index')); ?>" class="<?php echo e(request()->routeIs('admin.historiques.index*') ? 'active' : ''); ?>"><i class="fas fa-history"></i> Frais de Paiements</a>
                         <?php break; ?>
 
                     <?php case ('vet'): ?>

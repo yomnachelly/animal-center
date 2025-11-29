@@ -184,6 +184,7 @@
                         <a href="{{ route('especes.index') }}" class="{{ request()->routeIs('especes.*') ? 'active' : '' }}"><i class="fa-solid fa-shapes"></i> Espéces</a>
                         <a href="{{ route('avis.index') }}" class="{{ request()->routeIs('avis.*') ? 'active' : '' }}"><i class="fa-solid fa-star"></i> avis</a>
                         <a href="{{ route('admin.paiements.index') }}" class="{{ request()->routeIs('admin.paiements.*') ? 'active' : '' }}"><i class="fa-solid fa-money-bill-wave"></i> Frais de Paiements</a>
+                <a href="{{ route('admin.historiques.index') }}" class="{{ request()->routeIs('admin.historiques.index*') ? 'active' : '' }}"><i class="fas fa-history"></i> Frais de Paiements</a>
                         @break
 
                     @case('vet')

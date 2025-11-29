@@ -513,6 +513,15 @@
                     <i class="fas fa-dna action-icon"></i>
                     <span class="action-label">Races</span>
                 </a>
+                 <a href="<?php echo e(route('admin.paiements.index')); ?>" class="action-btn payment">
+                    <i class="fas fa-credit-card action-icon"></i>
+                    <span class="action-label">Frais de Paiement</span>
+                </a>
+                 <a href="<?php echo e(route('admin.historiques.index')); ?>" class="action-btn payment">
+                   <i class="fas fa-history"></i></i>
+                    <span class="action-label">historique de Paiement</span>
+                </a>
+
             </div>
         </div>
     </div>
