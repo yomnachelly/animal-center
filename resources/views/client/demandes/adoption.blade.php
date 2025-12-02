@@ -480,131 +480,158 @@
             </div>
         @endif
 
-        <!-- Cartes de statistiques -->
+             <!-- Cartes de statistiques - Filtrées pour les adoptions uniquement -->
         <div class="stats-cards">
+            @php
+                // Filtrer uniquement les demandes qui ont une adoption
+                $demandesAdoption = $demandes->filter(function($demande) {
+                    return $demande->adoption != null;
+                });
+                
+                // Compter par statut pour les adoptions
+                $totalAdoptions = $demandesAdoption->count();
+                $enAttenteAdoptions = $demandesAdoption->where('etat', 'en attente')->count();
+                $approuveAdoptions = $demandesAdoption->where('etat', 'approuvé')->count();
+                $refuseAdoptions = $demandesAdoption->where('etat', 'refusé')->count();
+            @endphp
+            
             <div class="stat-card">
                 <div class="stat-icon">
-                    <i class="fas fa-list"></i>
+                    <i class="fas fa-heart"></i>
                 </div>
-                <div class="stat-number">{{ $demandes->count() }}</div>
-                <div class="stat-label">Total des Demandes</div>
+                <div class="stat-number">{{ $totalAdoptions }}</div>
+                <div class="stat-label">Demandes d'Adoption</div>
             </div>
+            
             <div class="stat-card pending">
                 <div class="stat-icon">
                     <i class="fas fa-clock"></i>
                 </div>
-                <div class="stat-number">{{ $demandes->where('etat', 'en attente')->count() }}</div>
-                <div class="stat-label">En Attente</div>
+                <div class="stat-number">{{ $enAttenteAdoptions }}</div>
+                <div class="stat-label">Adoptions en Attente</div>
             </div>
+            
             <div class="stat-card approved">
                 <div class="stat-icon">
                     <i class="fas fa-check-circle"></i>
                 </div>
-                <div class="stat-number">{{ $demandes->where('etat', 'accepte')->count() }}</div>
-                <div class="stat-label">Approuvées</div>
+                <div class="stat-number">{{ $approuveAdoptions }}</div>
+                <div class="stat-label">Adoptions Approuvées</div>
             </div>
+            
             <div class="stat-card rejected">
                 <div class="stat-icon">
                     <i class="fas fa-times-circle"></i>
                 </div>
-                <div class="stat-number">{{ $demandes->where('etat', 'rejete')->count() }}</div>
-                <div class="stat-label">Refusées</div>
+                <div class="stat-number">{{ $refuseAdoptions }}</div>
+                <div class="stat-label">Adoptions Refusées</div>
             </div>
         </div>
 
         <!-- Liste des demandes -->
+ 
+        <!-- Liste des demandes d'adoption -->
         @if($demandes && $demandes->count() > 0)
             <div class="demandes-grid">
                 @foreach($demandes as $demande)
-                    <div class="demande-card">
-                        <div class="demande-card-header">
-                            <h3 class="animal-name">
-                                <i class="fas fa-paw"></i>
-                                {{ $demande->animal->nom }}
-                            </h3>
-                            <span class="etat-badge 
-                                @if($demande->etat == 'en attente') etat-attente
-                                @elseif($demande->etat == 'approuvé') etat-approuve
-                                @elseif($demande->etat == 'refusé') etat-refuse
-                                @endif">
-                                <i class="fas 
-                                    @if($demande->etat == 'en attente') fa-clock
-                                    @elseif($demande->etat == 'approuvé') fa-check-circle
-                                    @elseif($demande->etat == 'refusé') fa-times-circle
-                                    @endif me-1">
-                                </i>
-                                {{ ucfirst($demande->etat) }}
-                            </span>
-                        </div>
-                        
-                        <div class="demande-card-body">
-                            <div class="animal-info">
-                                <div class="animal-photo-container">
-                                    @if($demande->animal->photo)
-                                        <img src="{{ asset('storage/' . $demande->animal->photo) }}" 
-                                             class="animal-photo" 
-                                             alt="{{ $demande->animal->nom }}">
-                                    @else
-                                        <img src="{{ asset('images/default-animal.png') }}" 
-                                             class="animal-photo" 
-                                             alt="{{ $demande->animal->nom }}">
-                                    @endif
-                                </div>
-                                <div class="animal-details">
-                                    <div class="detail-item">
-                                        <i class="fas fa-dog"></i>
-                                        <strong>Espèce :</strong> {{ $demande->animal->espece->nom ?? '-' }}
-                                    </div>
-                                    <div class="detail-item">
-                                        <i class="fas fa-list"></i>
-                                        <strong>Race :</strong> {{ $demande->animal->race->nom ?? '-' }}
-                                    </div>
-                                    <div class="detail-item">
-                                        <i class="fas fa-birthday-cake"></i>
-                                        <strong>Âge :</strong> {{ $demande->animal->age ?? 'Inconnu' }} ans
-                                    </div>
-                                    <div class="detail-item">
-                                        <i class="fas fa-venus-mars"></i>
-                                        <strong>Sexe :</strong> {{ ucfirst($demande->animal->sexe) }}
-                                    </div>
-                                </div>
+                    @if($demande->adoption) <!-- Afficher seulement si c'est une adoption -->
+                        <div class="demande-card adoption-card">
+                            <div class="demande-card-header">
+                                <h3 class="animal-name">
+                                    <i class="fas fa-paw"></i>
+                                    {{ $demande->animal->nom }}
+                                </h3>
+                                <span class="etat-badge 
+                                    @if($demande->etat == 'en attente') etat-attente
+                                    @elseif($demande->etat == 'approuvé') etat-approuve
+                                    @elseif($demande->etat == 'refusé') etat-refuse
+                                    @endif">
+                                    <i class="fas 
+                                        @if($demande->etat == 'en attente') fa-clock
+                                        @elseif($demande->etat == 'approuvé') fa-check-circle
+                                        @elseif($demande->etat == 'refusé') fa-times-circle
+                                        @endif me-1">
+                                    </i>
+                                    {{ ucfirst($demande->etat) }}
+                                </span>
                             </div>
                             
-                            <div class="demande-meta">
-                                <div class="meta-item">
-                                    <i class="fas fa-calendar-plus"></i>
-                                    <strong>Date de la demande :</strong> 
-                                    {{ $demande->created_at ? $demande->created_at->format('d/m/Y à H:i') : 'Date non disponible' }}
+                            <div class="demande-card-body">
+                                <div class="animal-info">
+                                    <div class="animal-photo-container">
+                                        @if($demande->animal->photo)
+                                            <img src="{{ asset('storage/' . $demande->animal->photo) }}" 
+                                                 class="animal-photo" 
+                                                 alt="{{ $demande->animal->nom }}">
+                                        @else
+                                            <img src="{{ asset('images/default-animal.png') }}" 
+                                                 class="animal-photo" 
+                                                 alt="{{ $demande->animal->nom }}">
+                                        @endif
+                                    </div>
+                                    <div class="animal-details">
+                                        <div class="detail-item">
+                                            <i class="fas fa-dog"></i>
+                                            <strong>Espèce :</strong> {{ $demande->animal->espece->nom ?? '-' }}
+                                        </div>
+                                        <div class="detail-item">
+                                            <i class="fas fa-list"></i>
+                                            <strong>Race :</strong> {{ $demande->animal->race->nom ?? '-' }}
+                                        </div>
+                                        <div class="detail-item">
+                                            <i class="fas fa-birthday-cake"></i>
+                                            <strong>Âge :</strong> {{ $demande->animal->age ?? 'Inconnu' }} ans
+                                        </div>
+                                        <div class="detail-item">
+                                            <i class="fas fa-venus-mars"></i>
+                                            <strong>Sexe :</strong> {{ ucfirst($demande->animal->sexe) }}
+                                        </div>
+                                        @if($demande->adoption && $demande->adoption->date)
+                                            <div class="detail-item">
+                                                <i class="fas fa-calendar-check"></i>
+                                                <strong>Date d'adoption :</strong> 
+                                                {{ $demande->adoption->date->format('d/m/Y') }}
+                                            </div>
+                                        @endif
+                                    </div>
                                 </div>
-                                @if($demande->adoption && $demande->adoption->date)
+                                
+                                <div class="demande-meta">
                                     <div class="meta-item">
-                                        <i class="fas fa-calendar-check"></i>
-                                        <strong>Date d'adoption :</strong> 
-                                        {{ $demande->adoption->date->format('d/m/Y') }}
+                                        <i class="fas fa-calendar-plus"></i>
+                                        <strong>Date de la demande :</strong> 
+                                        {{ $demande->created_at ? $demande->created_at->format('d/m/Y à H:i') : 'Date non disponible' }}
+                                    </div>
+                                    @if($demande->adoption && $demande->adoption->date)
+                                        <div class="meta-item">
+                                            <i class="fas fa-calendar-plus"></i>
+                                            <strong>Date d'adoption prévue :</strong> 
+                                            {{ $demande->adoption->date->format('d/m/Y') }}
+                                        </div>
+                                    @endif
+                                </div>
+                            </div>
+
+                            <div class="demande-card-footer">
+                                @if($demande->etat == 'en attente')
+                                    <div class="status-alert alert-pending">
+                                        <i class="fas fa-clock"></i>
+                                        Votre demande d'adoption est en cours d'examen par notre équipe.
+                                    </div>
+                                @elseif($demande->etat == 'approuvé')
+                                    <div class="status-alert alert-approved">
+                                        <i class="fas fa-check-circle"></i>
+                                        Félicitations ! Votre demande d'adoption a été approuvée.
+                                    </div>
+                                @elseif($demande->etat == 'refusé')
+                                    <div class="status-alert alert-rejected">
+                                        <i class="fas fa-times-circle"></i>
+                                        Votre demande d'adoption a été refusée. N'hésitez pas à consulter nos autres animaux disponibles.
                                     </div>
                                 @endif
                             </div>
                         </div>
-
-                        <div class="demande-card-footer">
-                            @if($demande->etat == 'en attente')
-                                <div class="status-alert alert-pending">
-                                    <i class="fas fa-clock"></i>
-                                    Votre demande est en cours de traitement par notre équipe.
-                                </div>
-                            @elseif($demande->etat == 'approuvé')
-                                <div class="status-alert alert-approved">
-                                    <i class="fas fa-check-circle"></i>
-                                    Félicitations ! Votre demande a été approuvée.
-                                </div>
-                            @elseif($demande->etat == 'refusé')
-                                <div class="status-alert alert-rejected">
-                                    <i class="fas fa-times-circle"></i>
-                                    Votre demande a été refusée. N'hésitez pas à consulter nos autres animaux.
-                                </div>
-                            @endif
-                        </div>
-                    </div>
+                    @endif
                 @endforeach
             </div>
 

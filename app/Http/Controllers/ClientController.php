@@ -294,6 +294,7 @@ public function destroyHebergement($id)
     return redirect()->route('client.demandes.hebergement')
                      ->with('success', 'Demande d\'hébergement annulée avec succès.');
 }
+
     public function demandesAdoption()
     {
         // Récupérer les demandes d'adoption de l'utilisateur connecté
@@ -304,7 +305,6 @@ public function destroyHebergement($id)
 
         return view('client.demandes.adoption', compact('demandes'));
     }
-
 
 public function annulerRendezVous($id)
 {
