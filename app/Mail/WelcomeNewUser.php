@@ -27,7 +27,7 @@ class WelcomeNewUser extends Mailable
 public function build()
 {
     return $this
-        ->subject("Félicitations, {$this->user->name} — Bienvenue chez TonSite !")
+        ->subject("Félicitations, {$this->user->name} — Bienvenue chez Animal Center !")
         ->markdown('emails.welcome_new_user');
 }
 }

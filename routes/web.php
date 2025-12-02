@@ -268,14 +268,14 @@ Route::prefix('admin')->name('admin.')->group(function () {
     Route::get('/historiques/paiements/export', [StripeController::class, 'exportHistoriques'])->name('historiques.export');
     Route::get('/historiques/paiements/search', [StripeController::class, 'searchHistoriques'])->name('historiques.search');
 });
-Route::get('/test-mailtrap', function () {
+Route::get('/test-gmail-reel', function () {
     try {
-        \Mail::raw('Test Mailtrap depuis localhost!', function ($message) {
+        \Mail::raw('Test Gmail RÉEL! Configuration correcte!', function ($message) {
             $message->to('rktiti832@gmail.com')
-                    ->subject('Test Mailtrap Réussi');
+                    ->subject('Test Gmail RÉEL - Animal Center');
         });
-        return "Email envoyé avec Mailtrap! Vérifiez votre inbox Mailtrap.";
+        return "Email envoyé vers Gmail! Vérifiez votre VRAIE boîte Gmail.";
     } catch (\Exception $e) {
-        return "Erreur: " . $e->getMessage();
+        return "Erreur Gmail: " . $e->getMessage();
     }
 });
