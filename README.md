@@ -8,10 +8,11 @@
 
 <body class="bg-gray-100 text-gray-800 font-sans">
 
-  <header class="bg-white shadow">
+  <header class="bg-white shadow mb-6">
     <div class="max-w-5xl mx-auto p-6 flex justify-between items-center">
       <h1 class="text-2xl font-bold">🐾 Animal Center</h1>
-      <a href="https://github.com/yomnachelly/animal-center" target="_blank"
+      <a href="https://github.com/yomnachelly/animal-center" 
+         target="_blank"
          class="bg-black text-white px-4 py-2 rounded">
         Voir sur GitHub
       </a>
@@ -43,7 +44,7 @@
 
     <section class="bg-white p-6 rounded shadow mb-6">
       <h3 class="text-xl font-bold mb-2">💳 Paiement en ligne – Stripe</h3>
-      <p>
+      <p class="text-gray-700">
         L’application utilise Stripe pour permettre des paiements rapides, sécurisés
         et fiables lors des réservations d’hébergement.
       </p>
